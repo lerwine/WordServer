@@ -1,0 +1,183 @@
+
+<!-- saved from url=(0059)https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html -->
+<html><object type="{92622AAD-05E8-4459-B256-765CE1E929FB}" cotype="cs" id="cosymantecbfw" style="width: 100%; height: 0px; display: block; position: absolute; z-index:99999; top:0px; left:0px;"></object><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>SENSEIDX(5WN) manual page</title>
+<script type="text/javascript" id="cosymantecbfw_resize">var kvcPushDownExceptions = {};									var retryCSSHack = 0;									var isUrlExcepted = function() {										if(!window.location || !kvcPushDownExceptions) {											return false;										}										var path = kvcPushDownExceptions[window.location.host];										if(!path) {											return false; 										}										var patt = new RegExp(path);										return patt.test(window.location.pathname);									};									document.addEventListener("initializeExceptionListEvent", function(e) {										if(!e || !e.detail) { 											return; 										} 										kvcPushDownExceptions = e.detail;									}, false);									var coAdjustToolbarHeight = function(h) { 									var e = document.getElementById("cosymantecbfw"); 									if(e) { 										var nOldHeight = 0;										if(window.getComputedStyle(e,null)) {											var height = window.getComputedStyle(e,null).getPropertyValue("height");											var oldHeight = height.replace("px", "");											nOldHeight = Number(oldHeight);											if(!isNaN(nOldHeight)) {												nOldHeight = 0;											}										}										if(document.readyState === "complete") {											applyCSSHack(nOldHeight, h);										} else {											window.addEventListener("onload", applyCSSHack(nOldHeight, h), false);										}										e.style.height = h + "px";										e.style.left = window.pageXOffset + "px";									}								};							var arrayElements = new Array();							var applyCSSHack = function( oldHeight, newHeight) {									if(isUrlExcepted()) {										return;									}									if(!document.body) {										if(retryCSSHack++ < 30) {											setTimeout(function() { applyCSSHack(oldHeight, newHeight); }, 100);										}										return;									}									arrayElements = new Array();									if(document.body.style) {										document.body.style.position = "relative";										var len = newHeight + "px";										document.body.style.setProperty("margin-top", len, "important");                                        document.body.style.setProperty("border", "1px solid transparent", "important");									}									walk(document.body);									for(var i = 0; i < arrayElements.length; i++) {										var elem = arrayElements[i];										if(null == window.getComputedStyle(elem,null)) {											continue;										}										var pos = window.getComputedStyle(elem,null).getPropertyValue("position");										if(pos !== "fixed") {											continue;										}										if(elem.parentNode == document.body) {											elem.style.position = "absolute";											continue;										}										var oldTop = window.getComputedStyle(elem,null).getPropertyValue("top");										oldTop = oldTop.replace("px", "");										var nOldTop = Number(oldTop);										if(!isNaN(nOldTop)) {											nOldTop = 0;										}										var top = nOldTop + (Number(newHeight) - Number(oldHeight));										if(elem.style) {											elem.style.top = top + "px";										}									}								};							var walk = function (elm) {								if(window.getComputedStyle(elm,null) && "auto" !== window.getComputedStyle(elm,null).getPropertyValue("top")) {									arrayElements.push(elm);								}								var node;								for (node = elm.firstChild; node; node = node.nextSibling) {									if (node.nodeType === 1) {										walk(node);									}								}							};</script><script type="text/javascript" id="waxCS">var WAX = function () { var _arrInputs; return { getElement: function (i) { return _arrInputs[i]; }, setElement: function(i){ _arrInputs=i; } } }(); function waxGetElement(i) { return WAX.getElement(i); } function coSetPageData(t, d){ if('wax'==t) { WAX.setElement(d);} }</script></head>
+<body>
+<a href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#toc">Table of Contents</a><p>
+ 
+</p><h2><a name="sect0" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#toc0">NAME </a></h2>
+index.sense, sense.idx - WordNet's sense index  
+<h2><a name="sect1" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#toc1">DESCRIPTION </a></h2>
+The WordNet 
+sense index provides an alternate method for accessing synsets and word 
+senses in the WordNet database.  It is useful to applications that retrieve 
+synsets or other information related to a specific sense in WordNet, rather 
+than all the senses of a word or collocation.  It can also be used with 
+tools like <b>grep </b> and Perl to find all senses of a word in one or more 
+parts of speech.  A specific WordNet sense, encoded as a <i>sense_key </i>, can 
+be used as an index into this file to obtain its WordNet sense number, 
+the database byte offset of the synset containing the sense, and the number 
+of times it has been tagged in the semantic concordance texts. <p>
+ Concatenating 
+the <i>lemma </i> and <i>lex_sense </i> fields of a semantically tagged word (represented 
+in a <b>&lt;wf&nbsp; </b>...&nbsp;<b>&gt; </b> attribute/value pair) in a semantic concordance file, using 
+<b>% </b> as the concatenation character, creates the <i>sense_key </i> for that sense, 
+which can in turn be used to search the sense index file. </p><p>
+ A <i>sense_key 
+</i> is the best way to represent a sense in semantic tagging or other systems 
+that refer to WordNet senses. <i>sense_key </i>s are independent of WordNet sense 
+numbers and <i>synset_offset </i>s, which vary between versions of the database. 
+Using the sense index and a <i>sense_key </i>, the corresponding synset (via 
+the <i>synset_offset </i>) and WordNet sense number can easily be obtained.  A 
+mapping from noun <i>sense_key </i>s in WordNet 1.6 to corresponding 2.0 <i>sense_key 
+</i>s is provided with version 2.0, and is described in <b><a href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html">sensemap</a></b><a href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html">(5WN)</a>
+. </p><p>
+ See 
+<b><a href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html">wndb</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html">(5WN)</a>
+ for a thorough discussion of the WordNet database files.  
+</p><h3><a name="sect2" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#toc2">File 
+Format </a></h3>
+The sense index file lists all of the senses in the WordNet database 
+with each line representing one sense.  The file is in alphabetical order, 
+fields are separated by one space, and each line is terminated with a 
+newline character. <p>
+ Each line is of the form: </p><p>
+  </p><blockquote><i>sense_key&nbsp;&nbsp;synset_offset&nbsp;&nbsp;sense_number&nbsp;&nbsp;tag_cnt 
+</i>  </blockquote>
+<p>
+ <i>sense_key </i> is an encoding of the word sense.  Programs can construct 
+a sense key in this format and use it as a binary search key into the 
+sense index file.   The format of a <i>sense_key </i> is described below. </p><p>
+ <i>synset_offset 
+</i> is the byte offset that the synset containing the sense is found at in 
+the database "data" file corresponding to the part of speech encoded in 
+the <i>sense_key </i>.  <i>synset_offset </i> is an 8 digit, zero-filled decimal integer, 
+and can be used with <b><a href="https://wordnet.princeton.edu/wordnet/man/fseek.3.html">fseek</a></b><a href="https://wordnet.princeton.edu/wordnet/man/fseek.3.html">(3)</a>
+ to read a synset from the data file.  When 
+passed to the WordNet library function <b>read_synset() </b> along with the syntactic 
+category, a data structure containing the parsed synset is returned. </p><p>
+ <i>sense_number 
+</i> is a decimal integer indicating the sense number of the word, within 
+the part of speech encoded in <i>sense_key </i>, in the WordNet database.  See 
+<b><a href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html">wndb</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html">(5WN)</a>
+ for information about how sense numbers are assigned. </p><p>
+ <i>tag_cnt 
+</i> represents the decimal number of times the sense is tagged in various 
+semantic concordance texts.  A <i>tag_cnt </i> of <b>0 </b> indicates that the sense 
+has not been semantically tagged.  
+</p><h3><a name="sect3" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#toc3">Sense Key Encoding </a></h3>
+A <i>sense_key </i> is represented 
+as: <p>
+  </p><blockquote><i>lemma </i><b>% </b><i>lex_sense </i>  </blockquote>
+<p>
+ where <i>lex_sense </i> is encoded as: </p><p>
+  </p><blockquote><i>ss_type<b>:<i>lex_filenum<b>:<i>lex_id<b>:<i>head_word<b>:<i>head_id 
+</i></b></i></b></i></b></i></b></i>  </blockquote>
+<p>
+ <i>lemma </i> is the ASCII text of the word or collocation as found in the 
+WordNet database index file corresponding to <i>pos </i>. <i>lemma </i> is in lower case, 
+and collocations are formed by joining individual words with an underscore 
+(<b>_ </b>) character. </p><p>
+ <i>ss_type </i> is a one digit decimal integer representing the 
+synset type for the sense.  See <font size="-1"><b>Synset Type </b></font>
+  below for a listing of the 
+numbers corresponding to each synset type. </p><p>
+ <i>lex_filenum </i> is a two digit 
+decimal integer representing the name of the lexicographer file containing 
+the synset for the sense. See <b><a href="https://wordnet.princeton.edu/wordnet/man/lexnames.5WN.html">lexnames</a></b><a href="https://wordnet.princeton.edu/wordnet/man/lexnames.5WN.html">(5WN)</a>
+ for the list of lexicographer 
+file names and their corresponding numbers. </p><p>
+ <i>lex_id </i> is a two digit decimal 
+integer that, when appended onto <i>lemma </i>, uniquely identifies a sense within 
+a lexicographer file. <i>lex_id </i> numbers usually start with <b>00 </b>, and are incremented 
+as additional senses of the word are added to the same file, although 
+there is no requirement that the numbers be consecutive or begin with 
+<b>00 </b>.  Note that a value of <b>00 </b> is the default, and therefore is not present 
+in lexicographer files.  Only non-default <i>lex_id </i> values must be explicitly 
+assigned in lexicographer files.  See <b><a href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html">wninput</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html">(5WN)</a>
+ for information on the 
+format of lexicographer files. </p><p>
+ <i>head_word </i> is only present if the sense 
+is in an adjective satellite synset.  It is the lemma of the first word 
+of the satellite's head synset. </p><p>
+ <i>head_id </i> is a two digit decimal integer 
+that, when appended onto <i>head_word </i>, uniquely identifies the sense of 
+<i>head_word </i> within a lexicographer file, as described for <i>lex_id </i>.  There 
+is a value in this field only if <i>head_word </i> is present.  
+</p><h3><a name="sect4" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#toc4">Synset Type </a></h3>
+The 
+synset type is encoded as follows: <p>
+  </p><blockquote><b>1 </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;NOUN <br>
+ <b>2 </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;VERB <br>
+ <b>3 </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;ADJECTIVE <br>
+ <b>4 </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;ADVERB 
+<br>
+ <b>5 </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;ADJECTIVE SATELLITE <br>
+  </blockquote>
+ 
+<h2><a name="sect5" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#toc5">NOTES </a></h2>
+For non-satellite senses the <i>head_word 
+</i> and <i>head_id </i> fields have no values, however the field separator character 
+(<b>: </b>) is present.   
+<h2><a name="sect6" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#toc6">ENVIRONMENT VARIABLES (UNIX) </a></h2>
+
+<dl>
+
+<dt><b>WNHOME</b>  </dt>
+<dd>Base directory 
+for WordNet.  Default is <b>/usr/local/WordNet-3.0 </b>. </dd>
+
+<dt><b>WNSEARCHDIR</b>  </dt>
+<dd>Directory in 
+which the WordNet database has been installed.   Default is <b>WNHOME/dict 
+</b>. </dd>
+</dl>
+ 
+<h2><a name="sect7" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#toc7">REGISTRY (WINDOWS) </a></h2>
+
+<dl>
+
+<dt><b>HKEY_LOCAL_MACHINE\SOFTWARE\WordNet\3.0\WNHome</b>  </dt>
+<dd>Base directory 
+for WordNet.  Default is <b>C:\Program&nbsp;Files\WordNet\3.0 </b>. </dd>
+</dl>
+ 
+<h2><a name="sect8" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#toc8">FILES </a></h2>
+
+<dl>
+
+<dt><b>index.sense</b>  </dt>
+<dd>sense 
+index </dd>
+</dl>
+ 
+<h2><a name="sect9" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#toc9">SEE ALSO </a></h2>
+<b><a href="https://wordnet.princeton.edu/wordnet/man/binsrch.3WN.html">binsrch</a></b><a href="https://wordnet.princeton.edu/wordnet/man/binsrch.3WN.html">(3WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/wnsearch.3WN.html">wnsearch</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wnsearch.3WN.html">(3WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/lexnames.5WN.html">lexnames</a></b><a href="https://wordnet.princeton.edu/wordnet/man/lexnames.5WN.html">(5WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/wnintro.5WN.html">wnintro</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wnintro.5WN.html">(5WN)</a>
+, 
+<b><a href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html">sensemap</a></b><a href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html">(5WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html">wndb</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html">(5WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html">wninput</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html">(5WN)</a>
+. <p>
+
+</p><hr><p>
+<a name="toc"><b>Table of Contents</b></a></p><p>
+</p><ul>
+<li><a name="toc0" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#sect0">NAME</a></li>
+<li><a name="toc1" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#sect1">DESCRIPTION</a></li>
+<ul>
+<li><a name="toc2" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#sect2">File Format</a></li>
+<li><a name="toc3" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#sect3">Sense Key Encoding</a></li>
+<li><a name="toc4" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#sect4">Synset Type</a></li>
+</ul>
+<li><a name="toc5" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#sect5">NOTES</a></li>
+<li><a name="toc6" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#sect6">ENVIRONMENT VARIABLES (UNIX)</a></li>
+<li><a name="toc7" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#sect7">REGISTRY (WINDOWS)</a></li>
+<li><a name="toc8" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#sect8">FILES</a></li>
+<li><a name="toc9" href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html#sect9">SEE ALSO</a></li>
+</ul>
+
+</body></html>

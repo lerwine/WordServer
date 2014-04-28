@@ -1,0 +1,490 @@
+
+<!-- saved from url=(0058)https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html -->
+<html><object type="{92622AAD-05E8-4459-B256-765CE1E929FB}" cotype="cs" id="cosymantecbfw" style="width: 100%; height: 0px; display: block; position: absolute; z-index:99999; top:0px; left:0px;"></object><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>WNINPUT(5WN) manual page</title>
+<script type="text/javascript" id="cosymantecbfw_resize">var kvcPushDownExceptions = {};									var retryCSSHack = 0;									var isUrlExcepted = function() {										if(!window.location || !kvcPushDownExceptions) {											return false;										}										var path = kvcPushDownExceptions[window.location.host];										if(!path) {											return false; 										}										var patt = new RegExp(path);										return patt.test(window.location.pathname);									};									document.addEventListener("initializeExceptionListEvent", function(e) {										if(!e || !e.detail) { 											return; 										} 										kvcPushDownExceptions = e.detail;									}, false);									var coAdjustToolbarHeight = function(h) { 									var e = document.getElementById("cosymantecbfw"); 									if(e) { 										var nOldHeight = 0;										if(window.getComputedStyle(e,null)) {											var height = window.getComputedStyle(e,null).getPropertyValue("height");											var oldHeight = height.replace("px", "");											nOldHeight = Number(oldHeight);											if(!isNaN(nOldHeight)) {												nOldHeight = 0;											}										}										if(document.readyState === "complete") {											applyCSSHack(nOldHeight, h);										} else {											window.addEventListener("onload", applyCSSHack(nOldHeight, h), false);										}										e.style.height = h + "px";										e.style.left = window.pageXOffset + "px";									}								};							var arrayElements = new Array();							var applyCSSHack = function( oldHeight, newHeight) {									if(isUrlExcepted()) {										return;									}									if(!document.body) {										if(retryCSSHack++ < 30) {											setTimeout(function() { applyCSSHack(oldHeight, newHeight); }, 100);										}										return;									}									arrayElements = new Array();									if(document.body.style) {										document.body.style.position = "relative";										var len = newHeight + "px";										document.body.style.setProperty("margin-top", len, "important");                                        document.body.style.setProperty("border", "1px solid transparent", "important");									}									walk(document.body);									for(var i = 0; i < arrayElements.length; i++) {										var elem = arrayElements[i];										if(null == window.getComputedStyle(elem,null)) {											continue;										}										var pos = window.getComputedStyle(elem,null).getPropertyValue("position");										if(pos !== "fixed") {											continue;										}										if(elem.parentNode == document.body) {											elem.style.position = "absolute";											continue;										}										var oldTop = window.getComputedStyle(elem,null).getPropertyValue("top");										oldTop = oldTop.replace("px", "");										var nOldTop = Number(oldTop);										if(!isNaN(nOldTop)) {											nOldTop = 0;										}										var top = nOldTop + (Number(newHeight) - Number(oldHeight));										if(elem.style) {											elem.style.top = top + "px";										}									}								};							var walk = function (elm) {								if(window.getComputedStyle(elm,null) && "auto" !== window.getComputedStyle(elm,null).getPropertyValue("top")) {									arrayElements.push(elm);								}								var node;								for (node = elm.firstChild; node; node = node.nextSibling) {									if (node.nodeType === 1) {										walk(node);									}								}							};</script><script type="text/javascript" id="waxCS">var WAX = function () { var _arrInputs; return { getElement: function (i) { return _arrInputs[i]; }, setElement: function(i){ _arrInputs=i; } } }(); function waxGetElement(i) { return WAX.getElement(i); } function coSetPageData(t, d){ if('wax'==t) { WAX.setElement(d);} }</script></head>
+<body>
+<a href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#toc">Table of Contents</a><p>
+ 
+</p><h2><a name="sect0" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#toc0">NAME </a></h2>
+noun.<i>suffix </i>, verb.<i>suffix </i>, adj.<i>suffix </i>, adv.<i>suffix </i> - WordNet lexicographer 
+files that are input to  <b><a href="https://wordnet.princeton.edu/wordnet/man/grind.1WN.html">grind</a></b><a href="https://wordnet.princeton.edu/wordnet/man/grind.1WN.html">(1WN)</a>
+  
+<h2><a name="sect1" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#toc1">DESCRIPTION </a></h2>
+WordNet's source files 
+are written by lexicographers.  They are the product of a detailed relational 
+analysis of lexical semantics: a variety of lexical and semantic relations 
+are used to represent the organization of lexical knowledge.  Two kinds 
+of building blocks are distinguished in the source files: word forms and 
+word meanings.  Word forms are represented in their familiar orthography; 
+word meanings are represented by synonym sets (<i>synset </i>s) - lists of synonymous 
+word forms that are interchangeable in some context.  Two kinds of relations 
+are recognized: lexical and semantic.  Lexical relations hold between word 
+forms; semantic relations hold between word meanings. <p>
+ Lexicographer files 
+correspond to the syntactic categories implemented in WordNet - noun, verb, 
+adjective and adverb.  All of the synsets in a lexicographer file are in 
+the same syntactic category.  Each synset consists of a list of synonymous 
+words or collocations (eg. <b>"fountain pen" </b>, <b>"take in" </b>), and pointers that 
+describe the relations between this synset and other synsets.  These relations 
+include (but are not limited to) hypernymy/hyponymy, antonymy, entailment, 
+and meronymy/holonymy.  A word or collocation may appear in more than one 
+synset, and in more than one part of speech.  Each use of a word in a synset 
+represents a sense of that word in the part of speech corresponding to 
+the synset. </p><p>
+ Adjectives may be organized into clusters containing head 
+synsets and satellite synsets.  Adverbs generally point to the adjectives 
+from which they are derived. </p><p>
+ See  <b><a href="https://wordnet.princeton.edu/wordnet/man/wngloss.7WN.html">wngloss</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wngloss.7WN.html">(7WN)</a>
+ for a glossary of WordNet 
+terminology and a discussion of the database's content and logical organization. 
+ 
+</p><h3><a name="sect2" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#toc2">Lexicographer File Names </a></h3>
+The names of the lexicographer files are of 
+the form: <p>
+  </p><blockquote><i>pos</i>.<i>suffix</i>  </blockquote>
+<p>
+ where <i>pos </i> is either <b>noun </b>, <b>verb </b>, <b>adj </b> or <b>adv 
+</b>.  <i>suffix </i> may be used to organize groups of synsets into different files, 
+for example <b>noun.animal </b> and <b>noun.plant </b>.  See <b><a href="https://wordnet.princeton.edu/wordnet/man/lexnames.5WN.html">lexnames</a></b><a href="https://wordnet.princeton.edu/wordnet/man/lexnames.5WN.html">(5WN)</a>
+ for a list of 
+lexicographer file names that are used in building WordNet.  
+</p><h3><a name="sect3" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#toc3">Pointers </a></h3>
+Pointers 
+are used to represent the relations between the words in one synset and 
+another.  Semantic pointers represent relations between word meanings, 
+and therefore pertain to all of the words in the source and target synsets. 
+ Lexical pointers represent relations between word forms, and pertain 
+only to specific words in the source and target synsets.  The following 
+pointer types are usually used to indicate lexical relations: Antonym, 
+Pertainym, Participle, Also See, Derivationally Related.  The remaining 
+pointer types are generally used to represent semantic relations. <p>
+ A relation 
+from a source to a target synset is formed by specifying a word from the 
+target synset in the source synset, followed by the <i>pointer_symbol </i> indicating 
+the pointer type.  The location of a pointer within a synset defines it 
+as either lexical or semantic.   The <font size="-1"><b>Lexicographer File Format </b></font>
+  section 
+describes the syntax for entering a semantic pointer, and <font size="-1"><b>Word Syntax 
+</b></font>
+  describes the syntax for entering a lexical pointer. </p><p>
+ Although there 
+are many pointer types, only certain types of relations are permitted 
+between synsets of each syntactic category. </p><p>
+ The <i>pointer_symbol </i>s for nouns 
+are:  </p><blockquote><b>! </b> <tt> </tt>&nbsp;<tt> </tt>&nbsp;Antonym <br>
+ <b>@ </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Hypernym <br>
+ <b>@i </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Instance Hypernym <br>
+ <b>&nbsp;~ </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Hyponym <br>
+ <b>&nbsp;~i </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Instance 
+Hyponym <br>
+ <b>#m </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Member holonym <br>
+ <b>#s </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Substance holonym <br>
+ <b>#p </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Part holonym <br>
+ <b>%m 
+</b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Member meronym <br>
+ <b>%s </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Substance meronym <br>
+ <b>%p </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Part meronym <br>
+ <b>= </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Attribute <br>
+ <b>+ 
+</b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Derivationally related form<tt> </tt>&nbsp;<tt> </tt>&nbsp;<tt> </tt>&nbsp;<tt> </tt>&nbsp; <br>
+ <b>;c </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Domain of synset - TOPIC <br>
+ <b>-c </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Member of this 
+domain - TOPIC <br>
+ <b>;r </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Domain of synset - REGION <br>
+ <b>-r </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Member of this domain - REGION 
+<br>
+ <b>;u </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Domain of synset - USAGE <br>
+ <b>-u </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Member of this domain - USAGE <br>
+  </blockquote>
+<p>
+ The <i>pointer_symbol 
+</i>s for verbs are:  </p><blockquote><b>! </b> <tt> </tt>&nbsp;<tt> </tt>&nbsp;Antonym <br>
+ <b>@ </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Hypernym <br>
+ <b>&nbsp;~ </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Hyponym <br>
+ <b>* </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Entailment <br>
+ <b>&gt; </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Cause 
+<br>
+ <b>^ </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Also see <br>
+ <b>$ </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Verb Group <br>
+ <b>+ </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Derivationally related form<tt> </tt>&nbsp;<tt> </tt>&nbsp;<tt> </tt>&nbsp;<tt> </tt>&nbsp; <br>
+ <b>;c </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Domain of 
+synset - TOPIC <br>
+ <b>;r </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Domain of synset - REGION <br>
+ <b>;u </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Domain of synset - USAGE 
+<br>
+  </blockquote>
+<p>
+ The <i>pointer_symbol </i>s for adjectives are:  </p><blockquote><b>! </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Antonym <br>
+ <b>&amp; </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Similar to <br>
+ <b>&lt; 
+</b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Participle of verb <br>
+ <b>\ </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Pertainym (pertains to noun) <br>
+ <b>= </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Attribute <br>
+ <b>^ </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Also 
+see <br>
+ <b>;c </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Domain of synset - TOPIC <br>
+ <b>;r </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Domain of synset - REGION <br>
+ <b>;u </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Domain 
+of synset - USAGE <br>
+  </blockquote>
+<p>
+ The <i>pointer_symbol </i>s for adverbs are:  </p><blockquote><b>! </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Antonym <br>
+ 
+<b>\ </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Derived from adjective <br>
+ <b>;c </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Domain of synset - TOPIC <br>
+ <b>;r </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Domain of synset 
+- REGION <br>
+ <b>;u </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;Domain of synset - USAGE <br>
+  </blockquote>
+<p>
+ Many pointer types are reflexive, 
+meaning that if a synset contains a pointer to another synset, the other 
+synset should contain a corresponding reflexive pointer.   <b><a href="https://wordnet.princeton.edu/wordnet/man/grind.1WN.html">grind</a></b><a href="https://wordnet.princeton.edu/wordnet/man/grind.1WN.html">(1WN)</a>
+ automatically 
+inserts missing reflexive pointers for the following pointer types: </p><p>
+  
+<table border="0">
+ <tbody><tr> <td align="CENTER"><b>Pointer </b> </td> <td align="CENTER"><b>Reflect </b> </td> </tr>
+ <tr>  </tr><tr> <td align="LEFT">Antonym </td> <td align="LEFT">Antonym </td> </tr>
+ <tr> <td align="LEFT">Hyponym </td> <td align="LEFT">Hypernym </td> </tr>
+ <tr> <td align="LEFT">Hypernym 
+</td> <td align="LEFT">Hyponym </td> </tr>
+ <tr> <td align="LEFT">Instance Hyponym </td> <td align="LEFT">Instance Hypernym </td> </tr>
+ <tr> <td align="LEFT">Instance Hypernym </td> 
+<td align="LEFT">Instance Hyponym </td> </tr>
+ <tr> <td align="LEFT">Holonym </td> <td align="LEFT">Meronym </td> </tr>
+ <tr> <td align="LEFT">Meronym </td> <td align="LEFT">Holonym </td> </tr>
+ <tr> <td align="LEFT">Similar to 
+</td> <td align="LEFT">Similar to </td> </tr>
+ <tr> <td align="LEFT">Attribute </td> <td align="LEFT">Attribute </td> </tr>
+ <tr> <td align="LEFT">Verb Group </td> <td align="LEFT">Verb Group </td> </tr>
+ <tr> <td align="LEFT">Derivationally 
+Related </td> <td align="LEFT">Derivationally Related </td> </tr>
+ <tr> <td align="LEFT">Domain of synset </td> <td align="LEFT">Member of Doman </td> 
+</tr>
+ </tbody></table>
+ 
+</p><h3><a name="sect4" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#toc4">Verb Frames </a></h3>
+Each verb synset contains a list of generic sentence frames 
+illustrating the types of simple sentences in which the verbs in the synset 
+can be used.  For some verb senses, example sentences illustrating actual 
+uses of the verb are provided.  (See <font size="-1"><b>Verb Example Sentences </b></font>
+  in <b><a href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html">wndb</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html">(5WN)</a>
+.) 
+Whenever there is no example sentence, the generic sentence frames specified 
+by the lexicographer are used.  The generic sentence frames are entered 
+in a synset as a comma-separated list of integer frame numbers.  The following 
+list is the text of the generic frames, preceded by their frame numbers: 
+<p>
+  </p><blockquote>1<tt> </tt>&nbsp;<tt> </tt>&nbsp;Something ----s <br>
+ 2<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s <br>
+ 3<tt> </tt>&nbsp;<tt> </tt>&nbsp;It is ----ing <br>
+ 4<tt> </tt>&nbsp;<tt> </tt>&nbsp;Something is ----ing PP <br>
+ 5<tt> </tt>&nbsp;<tt> </tt>&nbsp;Something 
+----s something Adjective/Noun <br>
+ 6<tt> </tt>&nbsp;<tt> </tt>&nbsp;Something ----s Adjective/Noun <br>
+ 7<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s Adjective 
+<br>
+ 8<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s something <br>
+ 9<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s somebody <br>
+ 10<tt> </tt>&nbsp;<tt> </tt>&nbsp;Something ----s somebody <br>
+ 
+11<tt> </tt>&nbsp;<tt> </tt>&nbsp;Something ----s something <br>
+ 12<tt> </tt>&nbsp;<tt> </tt>&nbsp;Something ----s to somebody <br>
+ 13<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s on something 
+<br>
+ 14<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s somebody something <br>
+ 15<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s something to somebody <br>
+ 
+16<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s something from somebody <br>
+ 17<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s somebody with something 
+<br>
+ 18<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s somebody of something <br>
+ 19<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s something on somebody 
+<br>
+ 20<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s somebody PP <br>
+ 21<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s something PP <br>
+ 22<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s PP 
+<br>
+ 23<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody's (body part) ----s <br>
+ 24<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s somebody to INFINITIVE <br>
+ 25<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody 
+----s somebody INFINITIVE <br>
+ 26<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s that CLAUSE <br>
+ 27<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s to somebody 
+<br>
+ 28<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s to INFINITIVE <br>
+ 29<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s whether INFINITIVE <br>
+ 30<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody 
+----s somebody into V-ing something <br>
+ 31<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s something with something 
+<br>
+ 32<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s INFINITIVE <br>
+ 33<tt> </tt>&nbsp;<tt> </tt>&nbsp;Somebody ----s VERB-ing <br>
+ 34<tt> </tt>&nbsp;<tt> </tt>&nbsp;It ----s that CLAUSE <br>
+ 35<tt> </tt>&nbsp;<tt> </tt>&nbsp;Something 
+----s INFINITIVE <br>
+  </blockquote>
+ 
+<h3><a name="sect5" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#toc5">Lexicographer File Format </a></h3>
+Synsets are entered one per 
+line, and each line is terminated with a newline character.  A line containing 
+a synset may be as long as necessary, but no newlines can be entered within 
+a synset.  Within a synset, spaces or tabs may be used to separate entities. 
+ Items enclosed in italicized square brackets may not be present. <p>
+ The 
+general synset syntax is: </p><p>
+  </p><blockquote><b>{ </b> <i>&nbsp;&nbsp;words&nbsp;&nbsp;pointers&nbsp;&nbsp; </i> <b>( </b> <i>&nbsp;gloss&nbsp; </i> <b>)&nbsp;&nbsp;} </b> 
+<br>
+  </blockquote>
+<p>
+ Synsets of this form are valid for all syntactic categories except 
+verb, and are referred to as basic synsets.  At least one <i>word </i> and a <i>gloss 
+</i> are required to form a valid synset.  Pointers entered following all the 
+<i>words </i> in a synset represent semantic relations between all the words 
+in the source and target synsets. </p><p>
+ For verbs, the basic synset syntax is 
+defined as follows: </p><p>
+   </p><blockquote><b>{ </b> <i>&nbsp;&nbsp;words&nbsp;&nbsp;pointers&nbsp;&nbsp;frames&nbsp;&nbsp; </i> <b>( </b> &nbsp;<i>gloss&nbsp; </i> <b>)&nbsp;&nbsp;} 
+</b> <br>
+  </blockquote>
+<p>
+ Adjective may be organized into clusters containing one or more head 
+synsets and optional satellite synsets.  Adjective clusters are of the 
+form: </p><p>
+  </p><blockquote><b>[ </b><br>
+ <i>head synset </i><br>
+ [satellite synsets] <br>
+ [-] <br>
+ [additional head/satellite 
+synsets] <br>
+ <b>] </b> <br>
+  </blockquote>
+ <p>
+ Each adjective cluster is enclosed in square brackets, 
+and may have one or more parts.  Each part consists of a head synset and 
+optional satellite synsets that are conceptually similar to the head synset's 
+meaning.  Parts of a cluster are separated by one or more hyphens (<b>- </b>) on 
+a line by themselves, with the terminating square bracket following the 
+last synset.  Head and satellite synsets follow the syntax of basic synsets, 
+however a "Similar to" pointer must be specified in a head synset for 
+each of its satellite synsets.  Most adjective clusters contain two antonymous 
+parts.  See <b><a href="https://wordnet.princeton.edu/wordnet/man/wngloss.7WN.html">wngloss</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wngloss.7WN.html">(7WN)</a>
+ for a discussion of adjective clusters, and <font size="-1"><b>Special 
+Adjective Syntax </b></font>
+  for more information on adjective cluster syntax. </p><p>
+ Synsets 
+for relational adjectives (pertainyms) and participial adjectives do not 
+adhere to the cluster structure.  They use the basic synset syntax. </p><p>
+ Comments 
+can be entered in a lexicographer file by enclosing the text of the comment 
+in parentheses.  Note that comments <b>cannot </b> appear within a synset, as 
+parentheses within a synset have an entirely different meaning (see <font size="-1"><b>Gloss 
+Syntax </b></font>
+  ).  However, entire synsets (or adjective clusters) can be "commented 
+out" by enclosing them in parentheses.  This is often used by the lexicographers 
+to verify the syntax of files under development or to leave a note to 
+oneself while working on entries.  
+</p><h3><a name="sect6" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#toc6">Word Syntax </a></h3>
+A synset must have at least 
+one word, and the words of a synset must appear after the opening brace 
+and before any other synset constructs. A word may be entered in either 
+the simple word or word/pointer syntax. <p>
+ A simple word is of the form: 
+</p><p>
+  </p><blockquote><i>word[ </i> <b>( </b> <i>marker </i> <b>) </b> <i>][lex_id] </i> <b>, </b> <br>
+  </blockquote>
+<p>
+ <i>word </i> may be entered in any combination 
+of upper and lower case unless it is in an adjective cluster.  A collocation 
+is entered by joining the individual words with an underscore character 
+(<b>_ </b>). Numbers (integer or real) may be entered, either by themselves or 
+as part of a word string, by following the number with a double quote 
+(<b>" </b>). </p><p>
+ See  <font size="-1"><b>Special Adjective Syntax </b></font>
+  for a description of adjective clusters 
+and markers. </p><p>
+ <i>word </i> may be followed by an integer <i>lex_id </i> from <b>1 </b> to <b>15 
+</b>.  The <i>lex_id </i> is used to distinguish different senses of the same word 
+within a lexicographer file.  The lexicographer assigns <i>lex_id </i> values, 
+usually in ascending order, although there is no requirement that the 
+numbers be consecutive.  The default is <b>0 </b>, and does not have to be specified. 
+ A <i>lex_id </i> must be used on pointers if the desired sense has a non-zero 
+<i>lex_id </i> in its synset specification. </p><p>
+ Word/pointer syntax is of the form: 
+</p><p>
+  </p><blockquote><b>[&nbsp;&nbsp; </b> <i>word[ </i> <b>( </b> <i>marker </i> <b>) </b> <i>][lex_id] </i> <b>, </b> <i>&nbsp;&nbsp;pointers&nbsp;&nbsp; </i> <b>] </b> <br>
+  </blockquote>
+<p>
+ This syntax 
+is used when one or more pointers correspond only to the specific word 
+in the word/pointer set, rather than all the words in the synset, and 
+represents a lexical relation.  Note that a word/pointer set appears within 
+a synset, therefore the square brackets used to enclose it are treated 
+differently from those used to define an adjective cluster.  Only one word 
+can be specified in each word/pointer set, and any number of pointers 
+may be included.  A synset can have any number of word/pointer sets.  Each 
+is treated by <b><a href="https://wordnet.princeton.edu/wordnet/man/grind.1WN.html">grind</a></b><a href="https://wordnet.princeton.edu/wordnet/man/grind.1WN.html">(1WN)<b></b></a>
+ essentially as a <i>word </i>, so they all must appear 
+before any synset <i>pointers </i> representing semantic relations. </p><p>
+ For verbs, 
+the word/pointer syntax is extended in the following manner to allow the 
+user to specify generic sentence frames that, like pointers, correspond 
+only to a specific word, rather than all the words in the synset.  In this 
+case, <i>pointers </i> are optional. </p><p>
+  </p><blockquote><b>[&nbsp;&nbsp; </b> <i>word </i> <b>, </b> &nbsp;&nbsp;<i>[pointers]&nbsp;&nbsp;frames&nbsp;&nbsp; </i> <b>] 
+</b> <br>
+  </blockquote>
+ 
+<h3><a name="sect7" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#toc7">Pointer Syntax </a></h3>
+Pointers are optional in synsets.  If a pointer is specified 
+outside of a word/pointer set, the relation is applied to all of the words 
+in the synset, including any words specified using the word/pointer syntax. 
+ This indicates a semantic relation between the meanings of the words 
+in the synsets.  If specified within a word/pointer set, the relation corresponds 
+only to the word in the set and represents a lexical relation. <p>
+ A pointer 
+is of the form: </p><p>
+  </p><blockquote><i>[lex_filename </i><b>: </b> <i>]word[lex_id] </i><b>, </b><i>pointer_symbol </i> <br>
+  </blockquote>
+<p>
+ 
+or: </p><p>
+  </p><blockquote><i>[lex_filename </i><b>: </b> <i>]word[lex_id] </i><b>^ </b><i>word[lex_id] </i><b>, </b><i>pointer_symbol </i> <br>
+ 
+ </blockquote>
+<p>
+ For pointers, <i>word </i> indicates a word in another synset.  When the second 
+form of a pointer is used, the first <i>word </i> indicates a word in a head 
+synset, and the second is a word in a satellite of that cluster.  <i>word 
+</i> may be followed by a <i>lex_id </i> that is used to match the pointer to the 
+correct target synset.  The synset containing <i>word </i> may reside in another 
+lexicographer file.  In this case, <i>word </i> is preceded by <i>lex_filename </i> as 
+shown. </p><p>
+ See <font size="-1"><b>Pointers </b></font>
+  for a list of <i>pointer_symbol </i>s and their meanings. 
+ 
+</p><h3><a name="sect8" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#toc8">Verb Frame List Syntax </a></h3>
+Frame numbers corresponding to generic sentence 
+frames must be entered in each verb synset.  If a frame list is specified 
+outside of a word/pointer set, the verb frames in the list apply to all 
+of the words in the synset, including any words specified using the word/pointer 
+syntax.  If specified within a word/pointer set, the verb frames in the 
+list correspond only to the word in the set. <p>
+ A frame number list is entered 
+as follows: </p><p>
+  </p><blockquote><b>frames: </b>&nbsp;&nbsp;<i>f_num </i>[<b>, </b><i>f_num...] </i>  </blockquote>
+<p>
+ Where <i>f_num </i> specifies a generic 
+frame number. See <font size="-1"><b>Verb Frames </b></font>
+  for a list of generic sentences and their 
+corresponding frame numbers.  
+</p><h3><a name="sect9" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#toc9">Gloss Syntax </a></h3>
+A gloss is included in all synsets. 
+ The lexicographer may enter a text string of any length desired.  A gloss 
+is simply a string enclosed in parentheses with no embedded carriage returns. 
+ It provides a definition of what the synset represents and/or example 
+sentences.  
+<h3><a name="sect10" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#toc10">Special Adjective Syntax </a></h3>
+The syntax for representing antonymous 
+adjective synsets requires several additional conditions. <p>
+ The first word 
+of a head synset <b>must </b> be entered in upper case, and can be thought of 
+as the head word of the head synset.  The <i>word </i> part of a pointer from 
+one head synset to another head synset within the same cluster (usually 
+an antonym) must also be entered in upper case.  Usually antonymous adjectives 
+are entered using the word/pointer syntax described in <font size="-1"><b>Word Syntax </b></font>
+  to 
+indicate a lexical relation.  There is no restriction on the number of 
+parts that a cluster may have, and some clusters have three parts, representing 
+antonymous triplets, such as <b>solid </b>, <b>liquid </b>, and <b>gas </b>. </p><p>
+ A cross-cluster 
+pointer may be specified, allowing a head or satellite synset to point 
+to a head synset in a different cluster.  A cross-cluster pointer is indicated 
+by entering the <i>word </i> part of the pointer in upper case. </p><p>
+ An adjective 
+may be annotated with a syntactic marker indicating a limitation on the 
+syntactic position the adjective may have in relation to noun that it 
+modifies.  If so marked, the marker appears between the word and its following 
+comma.  If a <i>lex_id </i> is specified, the marker immediately follows it.  The 
+syntactic markers are:  </p><blockquote><b>(p) </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;predicate position <br>
+ <b>(a) </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;prenominal (attributive) 
+position <br>
+ <b>(ip) </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;immediately postnominal position<tt> </tt>&nbsp;<tt> </tt>&nbsp;<tt> </tt>&nbsp;<tt> </tt>&nbsp; <br>
+  </blockquote>
+ 
+<h2><a name="sect11" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#toc11">EXAMPLES </a></h2>
+<i>(Note that 
+these are hypothetical examples not found in the WordNet lexicographer 
+files.) </i> <p>
+ Sample noun synsets:  </p><blockquote>{ canine, [ dog1, cat,! ] pooch, canid,@ 
+} <br>
+ { collie, dog1,@ (large multi-colored dog with pointy nose) } <br>
+ { hound, 
+hunting_dog, pack,#m dog1,@ } <br>
+ { dog, } <br>
+  </blockquote>
+<p>
+ Sample verb synsets:  </p><blockquote>{ [ confuse, 
+clarify,! frames: 1 ] blur, obscure, frames: 8, 10 } <br>
+ { [ clarify, confuse,! 
+] make_clear, interpret,@ frames: 8 } <br>
+ { interpret, construe, understand,@ 
+frames: 8 } <br>
+  </blockquote>
+<p>
+ Sample adjective clusters:  </p><blockquote>[ <br>
+ { [ HOT, COLD,! ] lukewarm(a), 
+TEPID,^ (hot to the touch) } <br>
+ { warm, } <br>
+ - <br>
+ { [ COLD, HOT,! ] frigid, (cold 
+to the touch) } <br>
+ { freezing, } <br>
+ ] <br>
+  </blockquote>
+<p>
+ Sample adverb synsets:  </p><blockquote>{ [ basically, 
+adj.all:essential^basic,\ ] [ essentially, adj.all:basic^fundamental,\ ] ( by 
+one's very nature )} <br>
+ { pointedly, adj.all:pungent^pointed,\ } <br>
+ { [ badly, 
+adj.all:bad,\ well,! ] ill, ("He was badly prepared") } <br>
+  </blockquote>
+ 
+<h2><a name="sect12" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#toc12">SEE ALSO </a></h2>
+<b><a href="https://wordnet.princeton.edu/wordnet/man/grind.1WN.html">grind</a></b><a href="https://wordnet.princeton.edu/wordnet/man/grind.1WN.html">(1WN)</a>
+, 
+<b><a href="https://wordnet.princeton.edu/wordnet/man/wnintro.5WN.html">wnintro</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wnintro.5WN.html">(5WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/lexnames.5WN.html">lexnames</a></b><a href="https://wordnet.princeton.edu/wordnet/man/lexnames.5WN.html">(5WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html">wndb</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html">(5WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/uniqbeg.7WN.html">uniqbeg</a></b><a href="https://wordnet.princeton.edu/wordnet/man/uniqbeg.7WN.html">(7WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/wngloss.7WN.html">wngloss</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wngloss.7WN.html">(7WN)</a>
+. <p>
+Fellbaum, 
+C. (1998), ed. <i>"WordNet: An Electronic Lexical Database" </i>. MIT Press, Cambridge, 
+MA. </p><p>
+ </p><p>
+
+</p><hr><p>
+<a name="toc"><b>Table of Contents</b></a></p><p>
+</p><ul>
+<li><a name="toc0" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#sect0">NAME</a></li>
+<li><a name="toc1" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#sect1">DESCRIPTION</a></li>
+<ul>
+<li><a name="toc2" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#sect2">Lexicographer File Names</a></li>
+<li><a name="toc3" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#sect3">Pointers</a></li>
+<li><a name="toc4" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#sect4">Verb Frames</a></li>
+<li><a name="toc5" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#sect5">Lexicographer File Format</a></li>
+<li><a name="toc6" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#sect6">Word Syntax</a></li>
+<li><a name="toc7" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#sect7">Pointer Syntax</a></li>
+<li><a name="toc8" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#sect8">Verb Frame List Syntax</a></li>
+<li><a name="toc9" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#sect9">Gloss Syntax</a></li>
+<li><a name="toc10" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#sect10">Special Adjective Syntax</a></li>
+</ul>
+<li><a name="toc11" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#sect11">EXAMPLES</a></li>
+<li><a name="toc12" href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html#sect12">SEE ALSO</a></li>
+</ul>
+
+</body></html>

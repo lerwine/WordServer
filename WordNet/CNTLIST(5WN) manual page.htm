@@ -1,0 +1,124 @@
+
+<!-- saved from url=(0058)https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html -->
+<html><object type="{92622AAD-05E8-4459-B256-765CE1E929FB}" cotype="cs" id="cosymantecbfw" style="width: 100%; height: 0px; display: block; position: absolute; z-index:99999; top:0px; left:0px;"></object><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>CNTLIST(5WN) manual page</title>
+<script type="text/javascript" id="cosymantecbfw_resize">var kvcPushDownExceptions = {};									var retryCSSHack = 0;									var isUrlExcepted = function() {										if(!window.location || !kvcPushDownExceptions) {											return false;										}										var path = kvcPushDownExceptions[window.location.host];										if(!path) {											return false; 										}										var patt = new RegExp(path);										return patt.test(window.location.pathname);									};									document.addEventListener("initializeExceptionListEvent", function(e) {										if(!e || !e.detail) { 											return; 										} 										kvcPushDownExceptions = e.detail;									}, false);									var coAdjustToolbarHeight = function(h) { 									var e = document.getElementById("cosymantecbfw"); 									if(e) { 										var nOldHeight = 0;										if(window.getComputedStyle(e,null)) {											var height = window.getComputedStyle(e,null).getPropertyValue("height");											var oldHeight = height.replace("px", "");											nOldHeight = Number(oldHeight);											if(!isNaN(nOldHeight)) {												nOldHeight = 0;											}										}										if(document.readyState === "complete") {											applyCSSHack(nOldHeight, h);										} else {											window.addEventListener("onload", applyCSSHack(nOldHeight, h), false);										}										e.style.height = h + "px";										e.style.left = window.pageXOffset + "px";									}								};							var arrayElements = new Array();							var applyCSSHack = function( oldHeight, newHeight) {									if(isUrlExcepted()) {										return;									}									if(!document.body) {										if(retryCSSHack++ < 30) {											setTimeout(function() { applyCSSHack(oldHeight, newHeight); }, 100);										}										return;									}									arrayElements = new Array();									if(document.body.style) {										document.body.style.position = "relative";										var len = newHeight + "px";										document.body.style.setProperty("margin-top", len, "important");                                        document.body.style.setProperty("border", "1px solid transparent", "important");									}									walk(document.body);									for(var i = 0; i < arrayElements.length; i++) {										var elem = arrayElements[i];										if(null == window.getComputedStyle(elem,null)) {											continue;										}										var pos = window.getComputedStyle(elem,null).getPropertyValue("position");										if(pos !== "fixed") {											continue;										}										if(elem.parentNode == document.body) {											elem.style.position = "absolute";											continue;										}										var oldTop = window.getComputedStyle(elem,null).getPropertyValue("top");										oldTop = oldTop.replace("px", "");										var nOldTop = Number(oldTop);										if(!isNaN(nOldTop)) {											nOldTop = 0;										}										var top = nOldTop + (Number(newHeight) - Number(oldHeight));										if(elem.style) {											elem.style.top = top + "px";										}									}								};							var walk = function (elm) {								if(window.getComputedStyle(elm,null) && "auto" !== window.getComputedStyle(elm,null).getPropertyValue("top")) {									arrayElements.push(elm);								}								var node;								for (node = elm.firstChild; node; node = node.nextSibling) {									if (node.nodeType === 1) {										walk(node);									}								}							};</script><script type="text/javascript" id="waxCS">var WAX = function () { var _arrInputs; return { getElement: function (i) { return _arrInputs[i]; }, setElement: function(i){ _arrInputs=i; } } }(); function waxGetElement(i) { return WAX.getElement(i); } function coSetPageData(t, d){ if('wax'==t) { WAX.setElement(d);} }</script></head>
+<body>
+<a href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#toc">Table of Contents</a><p>
+ 
+</p><h2><a name="sect0" href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#toc0">NAME </a></h2>
+cntlist - file listing number of times each tagged sense occurs 
+in a semantic concordance, sorted most to least frequently tagged <p>
+ cntlist.rev 
+- file listing number of times each tagged sense occurs in a semantic concordance, 
+sorted by sense key  
+</p><h2><a name="sect1" href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#toc1">DESCRIPTION </a></h2>
+A cntlist file for a semantic concordance 
+lists the number of times each semantically tagged sense occurs in the 
+concordance and its sense number in the WordNet database.  Each line in 
+the file corresponds to a sense in the WordNet database to which at least 
+one semantic tag points.  Only senses that are tagged in a concordance 
+are in the concordance's cntlist file. <p>
+  
+</p><h3><a name="sect2" href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#toc2">WordNet Database <i>cntlist </i> File 
+</a></h3>
+In the WordNet database, words are assigned sense numbers based on frequency 
+of use in semantically tagged corpora.  The cntlist file used by <b><a href="https://wordnet.princeton.edu/wordnet/man/grind.1WN.html">grind</a></b><a href="https://wordnet.princeton.edu/wordnet/man/grind.1WN.html">(1WN)<b></b></a>
+ 
+to build the WordNet database and assign the sense numbers is a union 
+of the cntlist files from the various semantic concordances that were 
+formerly released by Princeton University.  This combined cntlist file 
+is provided with the WordNet package and is found in the <b>WNSEARCHDIR </b> 
+directory. <p>
+ The <i>cntlist.rev </i> file is used at run-time by the WordNet library 
+code and browser interfaces to print in the output display the number 
+of times each sense has been tagged.  
+</p><h3><a name="sect3" href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#toc3">File Format </a></h3>
+Each line in a cntlist 
+file contains information for one sense.  The file is ordered from most 
+to least frequently tagged sense.  The fields are separated by one space, 
+and each line is terminated with a newline character.  Senses having the 
+same <i>tag_cnt </i> value are listed in reverse alphabetical order of the <i>lemma 
+</i> field of the <i>sense_key </i>. <p>
+ Each line in <b>cntlist </b> is of the form: </p><p>
+  </p><blockquote><i>tag_cnt&nbsp;&nbsp;sense_key&nbsp;&nbsp;sense_number 
+</i>  </blockquote>
+<p>
+ where <i>tag_cnt </i> is the decimal number of times the sense is tagged in 
+the corresponding semantic concordance.  <i>sense_key </i> is a WordNet sense 
+encoding and <i>sense_number </i> is a WordNet sense number as described in </p><p>
+ 
+The <i>cntlist.rev </i> file contains the same fields described above, in the 
+following order: </p><p>
+  </p><blockquote><i>sense_key&nbsp;&nbsp;sense_number&nbsp;&nbsp;tag_cnt </i>  </blockquote>
+<p>
+  
+</p><h2><a name="sect4" href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#toc4">NOTES </a></h2>
+Princeton 
+no longer maintains or releases the Semantic Concordance files.  The <i>cntlist 
+</i> file used to order the senses in WordNet 3.0 was generated from the Semantic 
+Concordance files at the point that they were last updated in 2001.  In 
+general, the order of senses presented usually reflects what the user 
+would expect, however sense ordering is now less reliable than in prior 
+releases and should not be construed as an accurate indicator of frequency 
+of use.  
+<h2><a name="sect5" href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#toc5">ENVIRONMENT VARIABLES (UNIX) </a></h2>
+
+<dl>
+
+<dt><b>WNHOME</b>  </dt>
+<dd>Base directory for WordNet. 
+ Default is <b>/usr/local/WordNet-3.0 </b>. </dd>
+
+<dt><b>WNSEARCHDIR</b>  </dt>
+<dd>Directory in which the 
+WordNet database has been installed.   Default is <b>WNHOME/dict </b>. </dd>
+</dl>
+ 
+<h2><a name="sect6" href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#toc6">REGISTRY 
+(WINDOWS) </a></h2>
+
+<dl>
+
+<dt><b>HKEY_LOCAL_MACHINE\SOFTWARE\WordNet\3.0\WNHome</b>  </dt>
+<dd>Base directory for 
+WordNet.  Default is <b>C:\Program&nbsp;Files\WordNet\3.0 </b>. </dd>
+
+<dt><b>HKEY_CURRENT_USER\SOFTWARE\WordNet\3.0\wnres</b> 
+ </dt>
+<dd>User's default browser options. </dd>
+</dl>
+ 
+<h2><a name="sect7" href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#toc7">FILES </a></h2>
+
+<dl>
+
+<dt><b>cntlist, cntlist.rev</b>  </dt>
+<dd>file of combined 
+semantic concordance <b>cntlist </b> files.  Used to assign sense numbers in WordNet 
+database </dd>
+</dl>
+ 
+<h2><a name="sect8" href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#toc8">SEE ALSO </a></h2>
+<b><a href="https://wordnet.princeton.edu/wordnet/man/grind.1WN.html">grind</a></b><a href="https://wordnet.princeton.edu/wordnet/man/grind.1WN.html">(1WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/wnintro.5WN.html">wnintro</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wnintro.5WN.html">(5WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html">senseidx</a></b><a href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html">(5WN)</a>
+. <p>
+
+</p><hr><p>
+<a name="toc"><b>Table of Contents</b></a></p><p>
+</p><ul>
+<li><a name="toc0" href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#sect0">NAME</a></li>
+<li><a name="toc1" href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#sect1">DESCRIPTION</a></li>
+<ul>
+<li><a name="toc2" href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#sect2">WordNet Database cntlist  File</a></li>
+<li><a name="toc3" href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#sect3">File Format</a></li>
+</ul>
+<li><a name="toc4" href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#sect4">NOTES</a></li>
+<li><a name="toc5" href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#sect5">ENVIRONMENT VARIABLES (UNIX)</a></li>
+<li><a name="toc6" href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#sect6">REGISTRY (WINDOWS)</a></li>
+<li><a name="toc7" href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#sect7">FILES</a></li>
+<li><a name="toc8" href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html#sect8">SEE ALSO</a></li>
+</ul>
+
+</body></html>

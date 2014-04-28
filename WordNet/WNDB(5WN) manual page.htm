@@ -1,0 +1,397 @@
+
+<!-- saved from url=(0055)https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html -->
+<html><object type="{92622AAD-05E8-4459-B256-765CE1E929FB}" cotype="cs" id="cosymantecbfw" style="width: 100%; height: 0px; display: block; position: absolute; z-index:99999; top:0px; left:0px;"></object><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>WNDB(5WN) manual page</title>
+<script type="text/javascript" id="cosymantecbfw_resize">var kvcPushDownExceptions = {};									var retryCSSHack = 0;									var isUrlExcepted = function() {										if(!window.location || !kvcPushDownExceptions) {											return false;										}										var path = kvcPushDownExceptions[window.location.host];										if(!path) {											return false; 										}										var patt = new RegExp(path);										return patt.test(window.location.pathname);									};									document.addEventListener("initializeExceptionListEvent", function(e) {										if(!e || !e.detail) { 											return; 										} 										kvcPushDownExceptions = e.detail;									}, false);									var coAdjustToolbarHeight = function(h) { 									var e = document.getElementById("cosymantecbfw"); 									if(e) { 										var nOldHeight = 0;										if(window.getComputedStyle(e,null)) {											var height = window.getComputedStyle(e,null).getPropertyValue("height");											var oldHeight = height.replace("px", "");											nOldHeight = Number(oldHeight);											if(!isNaN(nOldHeight)) {												nOldHeight = 0;											}										}										if(document.readyState === "complete") {											applyCSSHack(nOldHeight, h);										} else {											window.addEventListener("onload", applyCSSHack(nOldHeight, h), false);										}										e.style.height = h + "px";										e.style.left = window.pageXOffset + "px";									}								};							var arrayElements = new Array();							var applyCSSHack = function( oldHeight, newHeight) {									if(isUrlExcepted()) {										return;									}									if(!document.body) {										if(retryCSSHack++ < 30) {											setTimeout(function() { applyCSSHack(oldHeight, newHeight); }, 100);										}										return;									}									arrayElements = new Array();									if(document.body.style) {										document.body.style.position = "relative";										var len = newHeight + "px";										document.body.style.setProperty("margin-top", len, "important");                                        document.body.style.setProperty("border", "1px solid transparent", "important");									}									walk(document.body);									for(var i = 0; i < arrayElements.length; i++) {										var elem = arrayElements[i];										if(null == window.getComputedStyle(elem,null)) {											continue;										}										var pos = window.getComputedStyle(elem,null).getPropertyValue("position");										if(pos !== "fixed") {											continue;										}										if(elem.parentNode == document.body) {											elem.style.position = "absolute";											continue;										}										var oldTop = window.getComputedStyle(elem,null).getPropertyValue("top");										oldTop = oldTop.replace("px", "");										var nOldTop = Number(oldTop);										if(!isNaN(nOldTop)) {											nOldTop = 0;										}										var top = nOldTop + (Number(newHeight) - Number(oldHeight));										if(elem.style) {											elem.style.top = top + "px";										}									}								};							var walk = function (elm) {								if(window.getComputedStyle(elm,null) && "auto" !== window.getComputedStyle(elm,null).getPropertyValue("top")) {									arrayElements.push(elm);								}								var node;								for (node = elm.firstChild; node; node = node.nextSibling) {									if (node.nodeType === 1) {										walk(node);									}								}							};</script><script type="text/javascript" id="waxCS">var WAX = function () { var _arrInputs; return { getElement: function (i) { return _arrInputs[i]; }, setElement: function(i){ _arrInputs=i; } } }(); function waxGetElement(i) { return WAX.getElement(i); } function coSetPageData(t, d){ if('wax'==t) { WAX.setElement(d);} }</script></head>
+<body>
+<a href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc">Table of Contents</a><p>
+ 
+</p><h2><a name="sect0" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc0">NAME </a></h2>
+index.noun, data.noun, index.verb, data.verb, index.adj, data.adj, index.adv, 
+data.adv - WordNet database files <p>
+noun.exc, verb.exc. adj.exc adv.exc - morphology 
+exception lists </p><p>
+sentidx.vrb, sents.vrb - files used by search code to display 
+sentences illustrating the use of some specific verbs  
+</p><h2><a name="sect1" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc1">DESCRIPTION </a></h2>
+For 
+each syntactic category, two files are needed to represent the contents 
+of the WordNet database - <b>index. </b><i>pos </i> and <b>data. </b><i>pos </i>, where <i>pos </i> is <b>noun 
+</b>, <b>verb </b>, <b>adj </b> and <b>adv </b>.  The other auxiliary files are used by the WordNet 
+library's searching functions and are needed to run the various WordNet 
+browsers. <p>
+ Each index file is an alphabetized list of all the words found 
+in WordNet in the corresponding part of speech.  On each line, following 
+the word, is a list of byte offsets (<i>synset_offset </i>s) in the corresponding 
+data file, one for each synset containing the word. Words in the index 
+file are in lower case only, regardless of how they were entered in the 
+lexicographer files.  This folds various orthographic representations of 
+the word into one line enabling database searches to be case insensitive. 
+ See <b><a href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html">wninput</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html">(5WN)</a>
+ for a detailed description of the lexicographer files 
+</p><p>
+ A data file for a syntactic category contains information corresponding 
+to the synsets that were specified in the lexicographer files, with relational 
+pointers resolved to <i>synset_offset </i>s. Each line corresponds to a synset. 
+ Pointers are followed and hierarchies traversed by moving from one synset 
+to another via the <i>synset_offset </i>s.   </p><p>
+ The exception list files, <i>pos </i><b>.exc 
+</b>, are used to help the morphological processor find base forms from irregular 
+inflections. </p><p>
+ The files <b>sentidx.vrb </b> and <b>sents.vrb </b> contain sentences illustrating 
+the use of specific senses of some verbs.  These files are used by the 
+searching software in response to a request for verb sentence frames.  
+Generic sentence frames are displayed when an illustrative sentence is 
+not present. </p><p>
+ The various database files are in ASCII formats that are 
+easily read by both humans and machines.  All fields, unless otherwise 
+noted, are separated by one space character, and all lines are terminated 
+by a newline character.  Fields enclosed in italicized square brackets 
+may not be present. </p><p>
+ See  <b><a href="https://wordnet.princeton.edu/wordnet/man/wngloss.7WN.html">wngloss</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wngloss.7WN.html">(7WN)</a>
+ for a glossary of WordNet terminology 
+and a discussion of the database's content and logical organization.  
+</p><h3><a name="sect2" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc2">Index 
+File Format </a></h3>
+Each index file begins with several lines containing a copyright 
+notice, version number and license agreement.  These lines all begin with 
+two spaces and the line number so they do not interfere with the binary 
+search algorithm that is used to look up entries in the index files.  All 
+other lines are in the following format.  In the field descriptions, <b>number 
+</b> always refers to a decimal integer unless otherwise defined. <p>
+ <i>lemma&nbsp;&nbsp;pos&nbsp;&nbsp;synset_cnt&nbsp;&nbsp;p_cnt&nbsp;&nbsp;[ptr_symbol...]&nbsp;&nbsp;sense_cnt&nbsp;&nbsp;tagsense_cnt 
+&nbsp;&nbsp;synset_offset&nbsp;&nbsp;[synset_offset...] </i> <br>
+ </p><p>
+ 
+</p><dl>
+
+<dt><i>lemma</i>  </dt>
+<dd>lower case ASCII text of word 
+or collocation.  Collocations are formed by joining individual words with 
+an underscore (<b>_ </b>) character. </dd>
+
+<dt><i>pos</i>  </dt>
+<dd>Syntactic category: <b>n </b> for noun files, 
+ <b>v </b> for verb files, <b>a </b> for adjective files, <b>r </b> for adverb files. </dd>
+</dl>
+<p>
+ </p><p>
+All remaining 
+fields are with respect to senses of <i>lemma </i> in <i>pos </i>. </p><p>
+ 
+</p><dl>
+
+<dt><i>synset_cnt</i>  </dt>
+<dd>Number 
+of synsets that <i>lemma </i> is in.  This is the number of senses of the word 
+in WordNet. See  <font size="-1"><b>Sense Numbers </b></font>
+ below for a discussion of how sense numbers 
+are assigned and the order of <i>synset_offset </i>s in the index files. </dd>
+
+<dt><i>p_cnt</i> 
+ </dt>
+<dd>Number of different pointers that <i>lemma </i> has in all synsets containing 
+it. </dd>
+
+<dt><i>ptr_symbol</i>  </dt>
+<dd>A space separated list of <i>p_cnt </i> different types of pointers 
+that <i>lemma </i> has in all synsets containing it. See <b><a href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html">wninput</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html">(5WN)</a>
+ for a list 
+of <i>pointer_symbol </i>s.  If all senses of <i>lemma </i> have no pointers, this field 
+is omitted and <i>p_cnt </i> is <b>0 </b>. </dd>
+
+<dt><i>sense_cnt</i>  </dt>
+<dd>Same as <i>sense_cnt </i> above.  This 
+is redundant, but the field was preserved for compatibility reasons. </dd>
+
+<dt><i>tagsense_cnt</i> 
+ </dt>
+<dd>Number of senses of <i>lemma </i> that are ranked according to their frequency 
+of occurrence in semantic concordance texts. </dd>
+
+<dt><i>synset_offset</i>  </dt>
+<dd>Byte offset 
+in <b>data.<i>pos </i></b> file of a synset containing <i>lemma </i>.  Each <i>synset_offset </i> in 
+the list corresponds to a different sense of <i>lemma </i> in WordNet.  <i>synset_offset 
+</i> is an 8 digit, zero-filled decimal integer that can be used with <b><a href="https://wordnet.princeton.edu/wordnet/man/fseek.3.html">fseek</a></b><a href="https://wordnet.princeton.edu/wordnet/man/fseek.3.html">(3)</a>
+ 
+to read a synset from the data file.  When passed to <b><a href="https://wordnet.princeton.edu/wordnet/man/read_synset.3WN.html">read_synset</a></b><a href="https://wordnet.princeton.edu/wordnet/man/read_synset.3WN.html">(3WN)</a>
+ along 
+with the syntactic category, a data structure containing the parsed synset 
+is returned. </dd>
+</dl>
+ 
+<h3><a name="sect3" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc3">Data File Format </a></h3>
+Each data file begins with several lines 
+containing a copyright notice, version number and license agreement.  These 
+lines all begin with two spaces and the line number.  All other lines are 
+in the following format.  Integer fields are of fixed length, and are zero-filled. 
+<p>
+ <i>synset_offset&nbsp;&nbsp;lex_filenum&nbsp;&nbsp;ss_type&nbsp;&nbsp;w_cnt&nbsp;&nbsp;word&nbsp;&nbsp;lex_id&nbsp;&nbsp;[word&nbsp;&nbsp;lex_id...]&nbsp;&nbsp;p_cnt&nbsp;&nbsp;[ptr...]&nbsp;&nbsp;[frames...]&nbsp;&nbsp;<b>| 
+</b></i><i>&nbsp;&nbsp;gloss </i> <br>
+ </p><p>
+ 
+</p><dl>
+
+<dt><i>synset_offset</i>  </dt>
+<dd>Current byte offset in the file represented 
+as an 8 digit decimal integer.  </dd>
+
+<dt><i>lex_filenum</i>  </dt>
+<dd>Two digit decimal integer 
+corresponding to the lexicographer file name containing the synset.  See 
+<b><a href="https://wordnet.princeton.edu/wordnet/man/lexnames.5WN.html">lexnames</a></b><a href="https://wordnet.princeton.edu/wordnet/man/lexnames.5WN.html">(5WN)</a>
+ for the list of filenames and their corresponding numbers. 
+</dd>
+
+<dt><i>ss_type</i>  </dt>
+<dd>One character code indicating the synset type:  </dd>
+</dl>
+<p>
+  </p><blockquote><b>n </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;NOUN <br>
+ <b>v </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;VERB 
+<br>
+ <b>a </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;ADJECTIVE <br>
+ <b>s </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;ADJECTIVE SATELLITE <br>
+ <b>r </b><tt> </tt>&nbsp;<tt> </tt>&nbsp;ADVERB <br>
+  </blockquote>
+
+<dl>
+
+<dt><i>w_cnt</i>  </dt>
+<dd>Two digit hexadecimal 
+integer indicating the number of words in the synset. </dd>
+
+<dt><i>word</i>  </dt>
+<dd>ASCII form 
+of a word as entered in the synset by the lexicographer, with spaces replaced 
+by underscore characters (<b>_ </b>).  The text of the word is case sensitive, 
+in contrast to its form in the corresponding <b>index. </b><i>pos </i> file, that contains 
+only lower-case forms.  In <b>data.adj </b>, a <i>word </i> is followed by a syntactic 
+marker if one was specified in the lexicographer file.  A syntactic marker 
+is appended, in parentheses, onto <i>word </i> without any intervening spaces. 
+ See <b><a href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html">wninput</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html">(5WN)</a>
+ for a list of the syntactic markers for adjectives. </dd>
+
+<dt><i>lex_id</i> 
+ </dt>
+<dd>One digit hexadecimal integer that, when appended onto <i>lemma </i>, uniquely 
+identifies a sense within a lexicographer file.  <i>lex_id </i> numbers usually 
+start with <b>0 </b>, and are incremented as additional senses of the word are 
+added to the same file, although there is no requirement that the numbers 
+be consecutive or begin with <b>0 </b>. Note that a value of <b>0 </b> is the default, 
+and therefore is not present in lexicographer files.  </dd>
+
+<dt><i>p_cnt</i>  </dt>
+<dd>Three digit 
+decimal integer indicating the number of pointers from this synset to 
+other synsets.  If <i>p_cnt </i> is <b>000 </b> the synset has no pointers. </dd>
+
+<dt><i>ptr</i>  </dt>
+<dd>A pointer 
+from this synset to another.  <i>ptr </i> is of the form: </dd>
+</dl>
+<p>
+ <i>pointer_symbol&nbsp;&nbsp;synset_offset&nbsp;&nbsp;pos&nbsp;&nbsp;source/target 
+</i> <br>
+ </p><p>
+ where <i>synset_offset </i> is the byte offset of the target synset in the 
+data file corresponding to <i>pos </i>. </p><p>
+ The <i>source/target </i> field distinguishes 
+lexical and semantic pointers.  It is a four byte field, containing two 
+two-digit hexadecimal integers.  The first two digits indicates the word 
+number in the current (source) synset, the last two digits indicate the 
+word number in the target synset.  A value of <b>0000 </b> means that <i>pointer_symbol 
+</i> represents a semantic relation between the current (source) synset and 
+the target synset indicated by <i>synset_offset </i>. </p><p>
+ A lexical relation between 
+two words in different synsets is represented by non-zero values in the 
+source and target word numbers. The first and last two bytes of this field 
+indicate the word numbers in the source and target synsets, respectively, 
+between which the relation holds.  Word numbers are assigned to the <i>word 
+</i> fields in a synset, from left to right, beginning with <b>1 </b>. </p><p>
+ See  <b><a href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html">wninput</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html">(5WN)</a>
+ 
+for a list of <i>pointer_symbol </i>s, and semantic and lexical pointer classifications. 
+
+</p><dl>
+
+<dt><i>frames</i>  </dt>
+<dd>In <b>data.verb </b> only, a list of numbers corresponding to the generic 
+verb sentence frames for <i>word </i>s in the synset.   <i>frames </i> is of the form: 
+</dd>
+</dl>
+<p>
+ <i>f_cnt&nbsp;&nbsp; </i> <b>+ </b> <i>&nbsp;&nbsp;f_num&nbsp;&nbsp;w_num&nbsp;&nbsp;[ </i> <b>+ </b> <i>&nbsp;&nbsp;f_num&nbsp;&nbsp;w_num...] </i> <br>
+ </p><p>
+ where <i>f_cnt </i> a two 
+digit decimal integer indicating the number of generic frames listed, 
+<i>f_num </i> is a two digit decimal integer frame number, and <i>w_num </i> is a two 
+digit hexadecimal integer indicating the word in the synset that the frame 
+applies to.  As with pointers, if this number is <b>00 </b>, <i>f_num </i> applies to 
+all <i>word </i>s in the synset.  If non-zero, it is applicable only to the word 
+indicated.  Word numbers are assigned as described for pointers. Each <i>f_num&nbsp;&nbsp;w_num 
+</i> pair is preceded by a <b>+ </b>. See <b><a href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html">wninput</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html">(5WN)</a>
+ for the text of the generic 
+sentence frames. 
+</p><dl>
+
+<dt><i>gloss</i>  </dt>
+<dd>Each synset contains a gloss.  A <i>gloss </i> is represented 
+as a vertical bar (<b>| </b>), followed by a text string that continues until 
+the end of the line.  The gloss may contain a definition, one or more example 
+sentences, or both. </dd>
+</dl>
+ 
+<h3><a name="sect4" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc4">Sense Numbers </a></h3>
+Senses in WordNet are generally ordered 
+from most to least frequently used, with the most common sense numbered 
+<b>1 </b>.  Frequency of use is determined by the number of times a sense is tagged 
+in the various semantic concordance texts.  Senses that are not semantically 
+tagged follow the ordered senses.  The <i>tagsense_cnt </i> field for each entry 
+in the <b>index.<i>pos </i></b> files indicates how many of the senses in the list have 
+been tagged. <p>
+ The  <b><a href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html">cntlist</a></b><a href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html">(5WN)</a>
+ file provided with the database lists the 
+number of times each sense is tagged in the semantic concordances.  The 
+data from <b>cntlist </b> is used by <b><a href="https://wordnet.princeton.edu/wordnet/man/grind.1WN.html">grind</a></b><a href="https://wordnet.princeton.edu/wordnet/man/grind.1WN.html">(1WN)</a>
+ to order the senses of each word. 
+ When the <b>index </b>.<i>pos </i> files are generated, the <i>synset_offset </i>s are output 
+in sense number order, with sense 1 first in the list.  Senses with the 
+same number of semantic tags are assigned unique but consecutive sense 
+numbers.  The WordNet  <font size="-1"><b>OVERVIEW </b></font>
+  search displays all senses of the specified 
+word, in all syntactic categories, and indicates which of the senses are 
+represented in the semantically tagged texts.  
+</p><h3><a name="sect5" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc5">Exception List File Format 
+</a></h3>
+Exception lists are alphabetized lists of inflected forms of words and 
+their base forms.  The first field of each line is an inflected form, followed 
+by a space separated list of one or more base forms of the word.  There 
+is one exception list file for each syntactic category. <p>
+ Note that the 
+noun and verb exception lists were automatically generated from a machine-readable 
+dictionary, and contain many words that are not in WordNet.  Also, for 
+many of the inflected forms, base forms could be easily derived using 
+the standard rules of detachment programmed into Morphy (See <b><a href="https://wordnet.princeton.edu/wordnet/man/morph.7WN.html">morph</a></b><a href="https://wordnet.princeton.edu/wordnet/man/morph.7WN.html">(7WN)</a>
+). 
+These anomalies are allowed to remain in the exception list files, as 
+they do no harm. </p><p>
+  
+</p><h3><a name="sect6" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc6">Verb Example Sentences </a></h3>
+For some verb senses, example 
+sentences illustrating the use of the verb sense can be displayed.  Each 
+line of the file <b>sentidx.vrb </b> contains a <i>sense_key </i> followed by a space 
+and a comma separated list of example sentence template numbers, in decimal. 
+ The file <b>sents.vrb </b> lists all of the example sentence templates.  Each 
+line begins with the template number followed by a space.  The rest of 
+the line is the text of a template example sentence, with <b>%s </b> used as 
+a placeholder in the text for the verb.  Both files are sorted alphabetically 
+so that the <i>sense_key </i> and template sentence number can be used as indices, 
+via <b><a href="https://wordnet.princeton.edu/wordnet/man/binsrch.3WN.html">binsrch</a></b><a href="https://wordnet.princeton.edu/wordnet/man/binsrch.3WN.html">(3WN)</a>
+,<b></b> into the appropriate file. <p>
+ When a request for  <font size="-1"><b>FRAMES 
+</b></font>
+  is made, the WordNet search code looks for the sense in <b>sentidx.vrb </b>. 
+ If found, the sentence template(s) listed is retrieved from <b>sents.vrb 
+</b>, and the <b>%s </b> is replaced with the verb.  If the sense is not found, the 
+applicable generic sentence frame(s) listed in <i>frames </i> is displayed.  
+</p><h2><a name="sect7" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc7">NOTES 
+</a></h2>
+Information in the <b>data.<i>pos </i></b> and <b>index.<i>pos </i></b> files represents all of the 
+word senses and synsets in the WordNet database. The <i>word </i>, <i>lex_id </i>, and 
+<i>lex_filenum </i> fields together uniquely identify each word sense in WordNet. 
+ These can be encoded in a <i>sense_key </i> as described in <b><a href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html">senseidx</a></b><a href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html">(5WN)</a>
+. Each 
+synset in the database can be uniquely identified by combining the <i>synset_offset 
+</i> for the synset with a code for the syntactic category (since it is possible 
+for synsets in different <b>data.<i>pos </i></b> files to have the same <i>synset_offset 
+</i>). <p>
+ The WordNet system provide both command line and window-based browser 
+interfaces to the database.  Both interfaces utilize a common library of 
+search and morphology code.  The source code for the library and interfaces 
+is included in the WordNet package.  See <b><a href="https://wordnet.princeton.edu/wordnet/man/wnintro.3WN.html">wnintro</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wnintro.3WN.html">(3WN)</a>
+ for an overview of 
+the WordNet source code.  
+</p><h2><a name="sect8" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc8">ENVIRONMENT VARIABLES (UNIX) </a></h2>
+
+<dl>
+
+<dt><b>WNHOME</b>  </dt>
+<dd>Base directory 
+for WordNet.  Default is <b>/usr/local/WordNet-3.0 </b>. </dd>
+
+<dt><b>WNSEARCHDIR</b>  </dt>
+<dd>Directory in 
+which the WordNet database has been installed.   Default is <b>WNHOME/dict 
+</b>. </dd>
+</dl>
+ 
+<h2><a name="sect9" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc9">REGISTRY (WINDOWS) </a></h2>
+
+<dl>
+
+<dt><b>HKEY_LOCAL_MACHINE\SOFTWARE\WordNet\3.0\WNHome</b>  </dt>
+<dd>Base directory 
+for WordNet.  Default is <b>C:\Program&nbsp;Files\WordNet\3.0 </b>. </dd>
+</dl>
+ 
+<h2><a name="sect10" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc10">FILES </a></h2>
+
+<dl>
+
+<dt><b>index.<i>pos </i></b>  </dt>
+<dd>database 
+index files </dd>
+
+<dt><b>data.<i>pos </i></b>  </dt>
+<dd>database data files </dd>
+
+<dt><b>*.vrb</b>  </dt>
+<dd>files of sentences illustrating 
+the use of verbs </dd>
+
+<dt><b><i>pos </i>.exc</b>  </dt>
+<dd>morphology exception lists </dd>
+</dl>
+ 
+<h2><a name="sect11" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#toc11">SEE ALSO </a></h2>
+<b><a href="https://wordnet.princeton.edu/wordnet/man/grind.1WN.html">grind</a></b><a href="https://wordnet.princeton.edu/wordnet/man/grind.1WN.html">(1WN)</a>
+, 
+<b><a href="https://wordnet.princeton.edu/wordnet/man/wn.1WN.html">wn</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wn.1WN.html">(1WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/wnb.1WN.html">wnb</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wnb.1WN.html">(1WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/wnintro.3WN.html">wnintro</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wnintro.3WN.html">(3WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/binsrch.3WN.html">binsrch</a></b><a href="https://wordnet.princeton.edu/wordnet/man/binsrch.3WN.html">(3WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/wnintro.5WN.html">wnintro</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wnintro.5WN.html">(5WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html">cntlist</a></b><a href="https://wordnet.princeton.edu/wordnet/man/cntlist.5WN.html">(5WN)</a>
+, 
+<b><a href="https://wordnet.princeton.edu/wordnet/man/lexnames.5WN.html">lexnames</a></b><a href="https://wordnet.princeton.edu/wordnet/man/lexnames.5WN.html">(5WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html">senseidx</a></b><a href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html">(5WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html">wninput</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wninput.5WN.html">(5WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/morphy.7WN.html">morphy</a></b><a href="https://wordnet.princeton.edu/wordnet/man/morphy.7WN.html">(7WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/wngloss.7WN.html">wngloss</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wngloss.7WN.html">(7WN)</a>
+, 
+<b><a href="https://wordnet.princeton.edu/wordnet/man/wngroups.7WN.html">wngroups</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wngroups.7WN.html">(7WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/wnstats.7WN.html">wnstats</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wnstats.7WN.html">(7WN)</a>
+. <p>
+
+</p><hr><p>
+<a name="toc"><b>Table of Contents</b></a></p><p>
+</p><ul>
+<li><a name="toc0" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#sect0">NAME</a></li>
+<li><a name="toc1" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#sect1">DESCRIPTION</a></li>
+<ul>
+<li><a name="toc2" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#sect2">Index File Format</a></li>
+<li><a name="toc3" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#sect3">Data File Format</a></li>
+<li><a name="toc4" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#sect4">Sense Numbers</a></li>
+<li><a name="toc5" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#sect5">Exception List File Format</a></li>
+<li><a name="toc6" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#sect6">Verb Example Sentences</a></li>
+</ul>
+<li><a name="toc7" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#sect7">NOTES</a></li>
+<li><a name="toc8" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#sect8">ENVIRONMENT VARIABLES (UNIX)</a></li>
+<li><a name="toc9" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#sect9">REGISTRY (WINDOWS)</a></li>
+<li><a name="toc10" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#sect10">FILES</a></li>
+<li><a name="toc11" href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html#sect11">SEE ALSO</a></li>
+</ul>
+
+</body></html>

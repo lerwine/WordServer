@@ -1,0 +1,156 @@
+
+<!-- saved from url=(0059)https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html -->
+<html><object type="{92622AAD-05E8-4459-B256-765CE1E929FB}" cotype="cs" id="cosymantecbfw" style="width: 100%; height: 0px; display: block; position: absolute; z-index:99999; top:0px; left:0px;"></object><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>SENSEMAP(5WN) manual page</title>
+<script type="text/javascript" id="cosymantecbfw_resize">var kvcPushDownExceptions = {};									var retryCSSHack = 0;									var isUrlExcepted = function() {										if(!window.location || !kvcPushDownExceptions) {											return false;										}										var path = kvcPushDownExceptions[window.location.host];										if(!path) {											return false; 										}										var patt = new RegExp(path);										return patt.test(window.location.pathname);									};									document.addEventListener("initializeExceptionListEvent", function(e) {										if(!e || !e.detail) { 											return; 										} 										kvcPushDownExceptions = e.detail;									}, false);									var coAdjustToolbarHeight = function(h) { 									var e = document.getElementById("cosymantecbfw"); 									if(e) { 										var nOldHeight = 0;										if(window.getComputedStyle(e,null)) {											var height = window.getComputedStyle(e,null).getPropertyValue("height");											var oldHeight = height.replace("px", "");											nOldHeight = Number(oldHeight);											if(!isNaN(nOldHeight)) {												nOldHeight = 0;											}										}										if(document.readyState === "complete") {											applyCSSHack(nOldHeight, h);										} else {											window.addEventListener("onload", applyCSSHack(nOldHeight, h), false);										}										e.style.height = h + "px";										e.style.left = window.pageXOffset + "px";									}								};							var arrayElements = new Array();							var applyCSSHack = function( oldHeight, newHeight) {									if(isUrlExcepted()) {										return;									}									if(!document.body) {										if(retryCSSHack++ < 30) {											setTimeout(function() { applyCSSHack(oldHeight, newHeight); }, 100);										}										return;									}									arrayElements = new Array();									if(document.body.style) {										document.body.style.position = "relative";										var len = newHeight + "px";										document.body.style.setProperty("margin-top", len, "important");                                        document.body.style.setProperty("border", "1px solid transparent", "important");									}									walk(document.body);									for(var i = 0; i < arrayElements.length; i++) {										var elem = arrayElements[i];										if(null == window.getComputedStyle(elem,null)) {											continue;										}										var pos = window.getComputedStyle(elem,null).getPropertyValue("position");										if(pos !== "fixed") {											continue;										}										if(elem.parentNode == document.body) {											elem.style.position = "absolute";											continue;										}										var oldTop = window.getComputedStyle(elem,null).getPropertyValue("top");										oldTop = oldTop.replace("px", "");										var nOldTop = Number(oldTop);										if(!isNaN(nOldTop)) {											nOldTop = 0;										}										var top = nOldTop + (Number(newHeight) - Number(oldHeight));										if(elem.style) {											elem.style.top = top + "px";										}									}								};							var walk = function (elm) {								if(window.getComputedStyle(elm,null) && "auto" !== window.getComputedStyle(elm,null).getPropertyValue("top")) {									arrayElements.push(elm);								}								var node;								for (node = elm.firstChild; node; node = node.nextSibling) {									if (node.nodeType === 1) {										walk(node);									}								}							};</script><script type="text/javascript" id="waxCS">var WAX = function () { var _arrInputs; return { getElement: function (i) { return _arrInputs[i]; }, setElement: function(i){ _arrInputs=i; } } }(); function waxGetElement(i) { return WAX.getElement(i); } function coSetPageData(t, d){ if('wax'==t) { WAX.setElement(d);} }</script></head>
+<body>
+<a href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#toc">Table of Contents</a><p>
+ 
+</p><h2><a name="sect0" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#toc0">NAME </a></h2>
+2.1to3.0.noun.poly - mapping from polysemous noun senses in WordNet 
+2.1 to  corresponding 3.0 senses <p>
+2.1to3.0.noun.mono - mapping from monosemous 
+noun senses in WordNet 2.1 to  corresponding 3.0 senses </p><p>
+2.1to3.0.verb.poly - 
+mapping from polysemous verb senses in WordNet 2.1 to  corresponding 3.0 
+senses </p><p>
+2.1to3.0.verb.poly - mapping from monosemous verb senses in WordNet 
+2.1 to  corresponding 3.0 senses  
+</p><h2><a name="sect1" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#toc1">DESCRIPTION </a></h2>
+WordNet users who have semantically 
+tagged text to senses in version 2.1, or who have statically assigned or 
+used 2.1 senses in other applications should upgrade to WordNet 3.0 if possible. 
+ To help users automatically convert 2.1 noun and verb senses to their 
+corresponding 3.0 senses, we provide sense mapping information with version 
+3.0. <p>
+ The sense mapping was done as follows: </p><p>
+  </p><blockquote>
+<ul>
+·<li>Nouns and verbs unique to 
+either database were ignored. </li>·<li>Nouns and verbs that are monosemous in both 
+databases were found and their <i>sense_key </i>s and <i>synset_offset </i>s were mapped. 
+ These sense mappings are in the files <b>2.1to3.0.{noun,verb}.mono </b>. </li>·<li>All senses 
+of polysemous nouns and verb in version 2.1 were mapped to senses in version 
+3.0.  Various heuristics were used to evaluate the similarity of 2.1 and 
+3.0 senses, and a score was assigned to each comparison. For each word, 
+each 2.1 sense was compared to all of the 3.0 senses for the same word, 
+and the 3.0 sense (or senses) with the highest score was deemed the best 
+mapping.  These sense mappings are in the file <b>2.1to3.0.{noun,verb}.poly </b>. </li>
+</ul>
+<p>
+ 
+Heuristics include comparison of sense keys, similarity of synset terms, 
+and relative tree location (comparision of  hypernyms).  Glosses are not 
+used for comparisions, as they are often  significantly modified.  </p></blockquote>
+ 
+<h3><a name="sect2" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#toc2">File 
+Format </a></h3>
+A sense mapping is generally represented by two <i>sense_key </i>&nbsp;&nbsp;<i>synset_offset 
+</i> pairs, one for the 2.1 sense and one for its corresponding 3.0 sense.  For 
+the polysemous sense mappings, <i>sense_number </i> is also in each pair.  This 
+field is not needed in the monosemous mappings since all monosemous words 
+are assigned <i>sense_number </i> 1.  See <b><a href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html">senseidx</a></b><a href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html">(5WN)</a>
+ for a detailed description 
+of these fields.  <p>
+ In all the mapping files, a space is the field delimiter 
+unless otherwise noted, and each line is terminated with a newline character. 
+ 
+</p><h3><a name="sect3" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#toc3">2.1to3.0.{noun,verb}.mono </a></h3>
+These files contain the mapping of sense keys for 
+nouns and verbs that are monosemous in both WordNet 2.1 and 3.0.  Although 
+the actual words and sense numbers are the same in both databases, not 
+all <i>sense_keys </i> are the same, and the <i>synset_offset </i>s are different.  This 
+file is an alphabetized list of one mapping per line.  Each line is of 
+the form: <p>
+  </p><blockquote><i>2.1_sense_key </i><b>; </b><i>2.1_synset_offset&nbsp;&nbsp;3.0_sense_key </i><b>; </b><i>3.0_synset_offset 
+</i>  </blockquote>
+ 
+<h3><a name="sect4" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#toc4">2.1to3.0.{noun,verb}.poly </a></h3>
+These files contain the mapping of sense keys 
+for nouns and verbs that are polysemous in WordNet 2.1 and are also found 
+in 3.0.  This file is sorted by score from highest score (100) to lowest 
+(0), and then alphabetically within each score.  Each line lists all 3.0 
+sense(s) that the corresponding 2.1 sense maps to with that score.  Each 
+line is of the form: <p>
+  </p><blockquote><i>score&nbsp;&nbsp;2.1_sense_info&nbsp;&nbsp;3.0_sense_info&nbsp;&nbsp;[3.0_sense_info...] 
+</i>  </blockquote>
+<p>
+ where <i>sense_info </i> consists of the following three fields: </p><p>
+  </p><blockquote><i>sense_key 
+</i><b>; </b><i>synset_offset </i><b>; </b><i>sense_number </i>  </blockquote>
+ 
+<h2><a name="sect5" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#toc5">SCORES </a></h2>
+Scores range from 0 to 100, and 
+are an indication of how confident the mapping heuristics are that the 
+senses are the same - a higher score indicates greater reliability in the 
+mapping.  The vast majority of senses mapped with a score of 90 or 100. 
+<p>
+  
+</p><h2><a name="sect6" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#toc6">NOTES </a></h2>
+The number of senses of a polysemous word in version 2.1 often 
+differs from the number of senses for the same word in version 3.0.  While 
+there will always be a mapping for each 2.1 sense to one or more 3.0 senses, 
+there may be 3.0 senses to which no 2.1 sense is mapped. <p>
+ WordNet 2.1 words 
+not found in either of the monsemous maps are unique to version 2.1, and 
+therefore cannot be mapped to version 3.0.  
+</p><h2><a name="sect7" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#toc7">ENVIRONMENT VARIABLES </a></h2>
+
+<dl>
+
+<dt><b>WNHOME</b> 
+ </dt>
+<dd>Base directory for WordNet.  Unix default is <b>/usr/local/WordNet-3.0 </b>, Windows 
+default is  <b>C:\Program&nbsp;Files\WordNet\3.0 </b>. </dd>
+</dl>
+ 
+<h2><a name="sect8" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#toc8">FILES </a></h2>
+All files are in <b>WNHOME/sensemap 
+</b> on Unix platforms, <b>WNHOME\sensemap </b> on Windows.  
+<h2><a name="sect9" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#toc9">FILES </a></h2>
+
+<dl>
+
+<dt><b>2.1to3.0.noun.poly</b>  
+</dt>
+<dd>mapping of polysemous 2.1 noun senses to 3.0 senses </dd>
+
+<dt><b>2.1to3.0.verb.poly</b>  </dt>
+<dd>mapping 
+of polysemous 2.1 verb senses to 3.0 senses </dd>
+
+<dt><b>2.1to3.0.noun.mono</b>  </dt>
+<dd>mapping of monosemous 
+2.1 noun senses to 3.0 senses </dd>
+
+<dt><b>2.1to3.0.verb.mono</b>  </dt>
+<dd>mapping of monosemous 2.1 verb 
+senses to 3.0 senses </dd>
+</dl>
+ 
+<h2><a name="sect10" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#toc10">SEE ALSO </a></h2>
+<b><a href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html">senseidx</a></b><a href="https://wordnet.princeton.edu/wordnet/man/senseidx.5WN.html">(5WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html">wndb</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wndb.5WN.html">(5WN)</a>
+, <b><a href="https://wordnet.princeton.edu/wordnet/man/wnpkgs.7WN.html">wnpkgs</a></b><a href="https://wordnet.princeton.edu/wordnet/man/wnpkgs.7WN.html">(7WN)</a>
+. <p>
+ </p><p>
+
+</p><hr><p>
+<a name="toc"><b>Table of Contents</b></a></p><p>
+</p><ul>
+<li><a name="toc0" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#sect0">NAME</a></li>
+<li><a name="toc1" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#sect1">DESCRIPTION</a></li>
+<ul>
+<li><a name="toc2" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#sect2">File Format</a></li>
+<li><a name="toc3" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#sect3">2.1to3.0.{noun,verb}.mono</a></li>
+<li><a name="toc4" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#sect4">2.1to3.0.{noun,verb}.poly</a></li>
+</ul>
+<li><a name="toc5" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#sect5">SCORES</a></li>
+<li><a name="toc6" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#sect6">NOTES</a></li>
+<li><a name="toc7" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#sect7">ENVIRONMENT VARIABLES</a></li>
+<li><a name="toc8" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#sect8">FILES</a></li>
+<li><a name="toc9" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#sect9">FILES</a></li>
+<li><a name="toc10" href="https://wordnet.princeton.edu/wordnet/man/sensemap.5WN.html#sect10">SEE ALSO</a></li>
+</ul>
+
+</body></html>
