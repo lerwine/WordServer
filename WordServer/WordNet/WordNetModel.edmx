@@ -1,0 +1,345 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="WordNetDbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="IndexWords">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Word" Type="nvarchar" MaxLength="1024" Nullable="false" />
+          <Property Name="SourceId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="CreatedOn" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SynsetPointers">
+          <Key>
+            <PropertyRef Name="SourceWordId" />
+            <PropertyRef Name="TargetWordId" />
+          </Key>
+          <Property Name="SourceWordId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="TargetWordId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Symbol" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="PartOfSpeech" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Position" Type="smallint" Nullable="false" />
+          <Property Name="TargetSynsetId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="SourceId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="CreatedOn" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Synsets">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="LexFileNum" Type="smallint" Nullable="false" />
+          <Property Name="Offset" Type="bigint" Nullable="false" />
+          <Property Name="SynsetType" Type="smallint" Nullable="false" />
+          <Property Name="Definition" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="SourceId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="CreatedOn" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SynsetWords">
+          <Key>
+            <PropertyRef Name="WordId" />
+            <PropertyRef Name="SynsetId" />
+          </Key>
+          <Property Name="WordId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="SynsetId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="LexId" Type="smallint" Nullable="false" />
+          <Property Name="Position" Type="smallint" Nullable="false" />
+          <Property Name="SourceId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CreatedBy" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="CreatedOn" Type="datetime" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_IndexWordSynsetWord">
+          <End Role="IndexWords" Type="Self.IndexWords" Multiplicity="1" />
+          <End Role="SynsetWords" Type="Self.SynsetWords" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IndexWords">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SynsetWords">
+              <PropertyRef Name="WordId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SourceSynsetSynsetPointer">
+          <End Role="Synsets" Type="Self.Synsets" Multiplicity="1" />
+          <End Role="SynsetPointers" Type="Self.SynsetPointers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Synsets">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SynsetPointers">
+              <PropertyRef Name="SourceWordId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SynsetSynsetWord">
+          <End Role="Synsets" Type="Self.Synsets" Multiplicity="1" />
+          <End Role="SynsetWords" Type="Self.SynsetWords" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Synsets">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SynsetWords">
+              <PropertyRef Name="SynsetId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TargetSynsetSynsetPointer">
+          <End Role="Synsets" Type="Self.Synsets" Multiplicity="1" />
+          <End Role="SynsetPointers" Type="Self.SynsetPointers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Synsets">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SynsetPointers">
+              <PropertyRef Name="TargetSynsetId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="WordNetDbModelStoreContainer">
+          <EntitySet Name="IndexWords" EntityType="Self.IndexWords" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SynsetPointers" EntityType="Self.SynsetPointers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Synsets" EntityType="Self.Synsets" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SynsetWords" EntityType="Self.SynsetWords" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_IndexWordSynsetWord" Association="Self.FK_IndexWordSynsetWord">
+            <End Role="IndexWords" EntitySet="IndexWords" />
+            <End Role="SynsetWords" EntitySet="SynsetWords" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SourceSynsetSynsetPointer" Association="Self.FK_SourceSynsetSynsetPointer">
+            <End Role="Synsets" EntitySet="Synsets" />
+            <End Role="SynsetPointers" EntitySet="SynsetPointers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SynsetSynsetWord" Association="Self.FK_SynsetSynsetWord">
+            <End Role="Synsets" EntitySet="Synsets" />
+            <End Role="SynsetWords" EntitySet="SynsetWords" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TargetSynsetSynsetPointer" Association="Self.FK_TargetSynsetSynsetPointer">
+            <End Role="Synsets" EntitySet="Synsets" />
+            <End Role="SynsetPointers" EntitySet="SynsetPointers" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="WordNetDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="IndexWord">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Word" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SourceId" Type="Guid" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CreatedOn" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="SynsetWords" Relationship="Self.FK_IndexWordSynsetWord" FromRole="IndexWords" ToRole="SynsetWords" />
+        </EntityType>
+        <EntityType Name="SynsetPointer">
+          <Key>
+            <PropertyRef Name="SourceWordId" />
+            <PropertyRef Name="TargetWordId" />
+          </Key>
+          <Property Name="SourceWordId" Type="Guid" Nullable="false" />
+          <Property Name="TargetWordId" Type="Guid" Nullable="false" />
+          <Property Name="Symbol" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PartOfSpeech" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Position" Type="Int16" Nullable="false" />
+          <Property Name="TargetSynsetId" Type="Guid" Nullable="false" />
+          <Property Name="SourceId" Type="Guid" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CreatedOn" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Synset" Relationship="Self.FK_SourceSynsetSynsetPointer" FromRole="SynsetPointerSources" ToRole="SynsetSources" />
+          <NavigationProperty Name="TargetSynset" Relationship="Self.FK_TargetSynsetSynsetPointer" FromRole="SynsetPointerTargets" ToRole="SynsetTargets" />
+        </EntityType>
+        <EntityType Name="Synset">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="LexFileNum" Type="Int16" Nullable="false" />
+          <Property Name="Offset" Type="Int64" Nullable="false" />
+          <Property Name="SynsetType" Type="Int16" Nullable="false" />
+          <Property Name="Definition" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SourceId" Type="Guid" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CreatedOn" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="SynsetPointers" Relationship="Self.FK_SourceSynsetSynsetPointer" FromRole="SynsetSources" ToRole="SynsetPointerSources" />
+          <NavigationProperty Name="SynsetPointerTargets" Relationship="Self.FK_TargetSynsetSynsetPointer" FromRole="SynsetTargets" ToRole="SynsetPointerTargets" />
+          <NavigationProperty Name="SynsetWords" Relationship="Self.FK_SynsetSynsetWord" FromRole="Synsets" ToRole="SynsetWords" />
+        </EntityType>
+        <EntityType Name="SynsetWord">
+          <Key>
+            <PropertyRef Name="WordId" />
+            <PropertyRef Name="SynsetId" />
+          </Key>
+          <Property Name="WordId" Type="Guid" Nullable="false" />
+          <Property Name="SynsetId" Type="Guid" Nullable="false" />
+          <Property Name="LexId" Type="Int16" Nullable="false" />
+          <Property Name="Position" Type="Int16" Nullable="false" />
+          <Property Name="SourceId" Type="Guid" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CreatedOn" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="IndexWord" Relationship="Self.FK_IndexWordSynsetWord" FromRole="SynsetWords" ToRole="IndexWords" />
+          <NavigationProperty Name="Synset" Relationship="Self.FK_SynsetSynsetWord" FromRole="SynsetWords" ToRole="Synsets" />
+        </EntityType>
+        <Association Name="FK_IndexWordSynsetWord">
+          <End Role="IndexWords" Type="Self.IndexWord" Multiplicity="1" />
+          <End Role="SynsetWords" Type="Self.SynsetWord" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IndexWords">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SynsetWords">
+              <PropertyRef Name="WordId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SourceSynsetSynsetPointer">
+          <End Role="SynsetSources" Type="Self.Synset" Multiplicity="1" />
+          <End Role="SynsetPointerSources" Type="Self.SynsetPointer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SynsetSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SynsetPointerSources">
+              <PropertyRef Name="SourceWordId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TargetSynsetSynsetPointer">
+          <End Role="SynsetTargets" Type="Self.Synset" Multiplicity="1" />
+          <End Role="SynsetPointerTargets" Type="Self.SynsetPointer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SynsetTargets">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SynsetPointerTargets">
+              <PropertyRef Name="TargetSynsetId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SynsetSynsetWord">
+          <End Role="Synsets" Type="Self.Synset" Multiplicity="1" />
+          <End Role="SynsetWords" Type="Self.SynsetWord" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Synsets">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SynsetWords">
+              <PropertyRef Name="SynsetId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="WordNetDbEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="IndexWords" EntityType="Self.IndexWord" />
+          <EntitySet Name="SynsetPointers" EntityType="Self.SynsetPointer" />
+          <EntitySet Name="Synsets" EntityType="Self.Synset" />
+          <EntitySet Name="SynsetWords" EntityType="Self.SynsetWord" />
+          <AssociationSet Name="FK_IndexWordSynsetWord" Association="Self.FK_IndexWordSynsetWord">
+            <End Role="IndexWords" EntitySet="IndexWords" />
+            <End Role="SynsetWords" EntitySet="SynsetWords" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SourceSynsetSynsetPointer" Association="Self.FK_SourceSynsetSynsetPointer">
+            <End Role="SynsetSources" EntitySet="Synsets" />
+            <End Role="SynsetPointerSources" EntitySet="SynsetPointers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TargetSynsetSynsetPointer" Association="Self.FK_TargetSynsetSynsetPointer">
+            <End Role="SynsetTargets" EntitySet="Synsets" />
+            <End Role="SynsetPointerTargets" EntitySet="SynsetPointers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SynsetSynsetWord" Association="Self.FK_SynsetSynsetWord">
+            <End Role="Synsets" EntitySet="Synsets" />
+            <End Role="SynsetWords" EntitySet="SynsetWords" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="WordNetDbModelStoreContainer" CdmEntityContainer="WordNetDbEntities">
+          <EntitySetMapping Name="IndexWords">
+            <EntityTypeMapping TypeName="WordNetDbModel.IndexWord">
+              <MappingFragment StoreEntitySet="IndexWords">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Word" ColumnName="Word" />
+                <ScalarProperty Name="SourceId" ColumnName="SourceId" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SynsetPointers">
+            <EntityTypeMapping TypeName="WordNetDbModel.SynsetPointer">
+              <MappingFragment StoreEntitySet="SynsetPointers">
+                <ScalarProperty Name="SourceWordId" ColumnName="SourceWordId" />
+                <ScalarProperty Name="TargetWordId" ColumnName="TargetWordId" />
+                <ScalarProperty Name="Symbol" ColumnName="Symbol" />
+                <ScalarProperty Name="PartOfSpeech" ColumnName="PartOfSpeech" />
+                <ScalarProperty Name="Position" ColumnName="Position" />
+                <ScalarProperty Name="TargetSynsetId" ColumnName="TargetSynsetId" />
+                <ScalarProperty Name="SourceId" ColumnName="SourceId" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Synsets">
+            <EntityTypeMapping TypeName="WordNetDbModel.Synset">
+              <MappingFragment StoreEntitySet="Synsets">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="LexFileNum" ColumnName="LexFileNum" />
+                <ScalarProperty Name="Offset" ColumnName="Offset" />
+                <ScalarProperty Name="SynsetType" ColumnName="SynsetType" />
+                <ScalarProperty Name="Definition" ColumnName="Definition" />
+                <ScalarProperty Name="SourceId" ColumnName="SourceId" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SynsetWords">
+            <EntityTypeMapping TypeName="WordNetDbModel.SynsetWord">
+              <MappingFragment StoreEntitySet="SynsetWords">
+                <ScalarProperty Name="WordId" ColumnName="WordId" />
+                <ScalarProperty Name="SynsetId" ColumnName="SynsetId" />
+                <ScalarProperty Name="LexId" ColumnName="LexId" />
+                <ScalarProperty Name="Position" ColumnName="Position" />
+                <ScalarProperty Name="SourceId" ColumnName="SourceId" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
