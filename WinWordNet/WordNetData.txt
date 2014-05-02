@@ -1,0 +1,3 @@
+﻿
+	WordNetData.tt
+	Erwine.Leonard.T.WordServer.WinWordNet

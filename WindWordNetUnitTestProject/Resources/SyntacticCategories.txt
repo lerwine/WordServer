@@ -1,0 +1,5 @@
+﻿# Taken from LEXNAMES(5WN)
+1     NOUN 
+2     VERB 
+3     ADJECTIVE 
+4     ADVERB 

@@ -1,0 +1,6 @@
+﻿## Taken from WNDB(5WN)
+n     NOUN 
+v     VERB 
+a     ADJECTIVE 
+s     ADJECTIVE SATELLITE 
+r     ADVERB 

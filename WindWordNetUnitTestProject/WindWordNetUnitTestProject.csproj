@@ -51,13 +51,40 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AttributesTest.cs" />
+    <Compile Include="MappingHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WordNetData.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WordNetData.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WinWordNet\WinWordNet.csproj">
       <Project>{bed5c341-0ec1-44a6-ab42-bb02c0936a03}</Project>
       <Name>WinWordNet</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="WordNetData.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>WordNetData.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AdjectivePointerSymbols.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AdverbPointerSymbols.txt" />
+    <Content Include="Resources\LexicographerFiles .txt" />
+    <Content Include="Resources\NounPointerSymbols.txt" />
+    <Content Include="Resources\PartOfSpeech.txt" />
+    <Content Include="Resources\SynsetTypeNumber.txt" />
+    <Content Include="Resources\SynsetTypeSymbol.txt" />
+    <Content Include="Resources\SyntacticCategories.txt" />
+    <Content Include="Resources\SyntacticMarkers.txt" />
+    <None Include="Resources\VerbFrames.txt" />
+    <Content Include="Resources\VerbPointerSymbols.txt" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

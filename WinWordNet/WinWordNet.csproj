@@ -43,6 +43,7 @@
     <Compile Include="DataFileRecord.cs" />
     <Compile Include="DataFileWord.cs" />
     <Compile Include="DataFileFrame.cs" />
+    <Compile Include="IndexFileRecord.cs" />
     <Compile Include="PointerType.cs" />
     <Compile Include="PartOfSpeech.cs" />
     <Compile Include="PointerSymbolAttribute.cs" />
@@ -52,6 +53,30 @@
     <Compile Include="SynsetType.cs" />
     <Compile Include="VerbFrame.cs" />
     <Compile Include="WordNetParseException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="WordNetData.txt">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WordNetData.tt</DependentUpon>
+    </Content>
+    <Content Include="WordNetData\AdverbSymbols.txt" />
+    <Content Include="WordNetData\LexicographerFiles .txt" />
+    <Content Include="WordNetData\NounPointerSymbols.txt" />
+    <Content Include="WordNetData\PartOfSpeech.txt" />
+    <Content Include="WordNetData\SynsetTypeNumber.txt" />
+    <Content Include="WordNetData\SynsetTypeSymbol.txt" />
+    <Content Include="WordNetData\SyntacticCategories.txt" />
+    <Content Include="WordNetData\SyntacticMarkers.txt" />
+    <Content Include="WordNetData\VerbPointerSymbols.txt" />
+    <None Include="WordNetData.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>WordNetData.txt</LastGenOutput>
+    </None>
+    <None Include="WordNetData\AdjectivePointerSymbols.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

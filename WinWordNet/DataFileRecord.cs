@@ -11,6 +11,7 @@ namespace Erwine.Leonard.T.WordServer.WinWordNet
     [Serializable]
     public class DataFileRecord
     {
+        public static readonly Regex CommentLine = new Regex(@"^\s{2}(?<lineNUmber>\d+)(\s+(?<comment>.+))?$", RegexOptions.Compiled);
         public static readonly Regex FirstFourFields = new Regex(@"^(?<synset_offset>\d{8})\s+(?<lex_filenum>\d{2})\s+(?<ss_type>[nvasr])\s+(?<w_cnt>[\da-f]{2})(?<r>.*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         public static readonly Regex Word = new Regex(@"^\s+(?<word>\S+?)(\((?<syntactic_marker>.+)\))?\s+(?<lex_id>[\da-f])(?<r>.*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         public static readonly Regex PointerCount = new Regex(@"^\s+(?<ptr_cnt>\d{3})(?<r>.*)$", RegexOptions.Compiled);

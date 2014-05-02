@@ -1,0 +1,6 @@
+﻿#### Taken from WNINPUT(5WN)
+!     Antonym 
+\     Derived from adjective 
+;c     Domain of synset - TOPIC 
+;r     Domain of synset - REGION 
+;u     Domain of synset - USAGE 
