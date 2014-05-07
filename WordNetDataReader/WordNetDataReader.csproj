@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataFile.cs" />
     <Compile Include="IndexFile.cs" />
     <Compile Include="IndexItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -44,6 +44,8 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="LongRunningJob.cs" />
+    <Compile Include="LongRunningJobBase.cs" />
     <Compile Include="PosAndSymbolAttribute.cs" />
     <Compile Include="PosValueAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

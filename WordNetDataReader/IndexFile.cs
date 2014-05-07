@@ -18,8 +18,11 @@ namespace Erwine.Leonard.T.WordServer.WordNetDataReader
         private static readonly Regex _offsetRegex = new Regex(@"^(?<synset_offset>\d+)\s+(?<r>\S?.*)$", RegexOptions.Compiled);
 
         private object _syncRoot = new object();
+        private IndexItem[] _backup = new IndexItem[0];
         private Common.PartOfSpeech _partOfSpeech;
-        private bool _loadInProgress = false;
+        private string _staticDbFolder;
+        private string _userFriendlyPathSpec;
+        private Task<bool> _reloadTask;
         private Exception _loadError = null;
         private int _linesProcessed = 0;
         private long _bytesProcessed = 0;
@@ -47,14 +50,14 @@ namespace Erwine.Leonard.T.WordServer.WordNetDataReader
             }
         }
 
-        public bool LoadInProgress
+        public string StaticDbFolder
         {
             get
             {
-                bool result;
+                string result;
                 lock (this._syncRoot)
                 {
-                    result = this._loadInProgress;
+                    result = this._staticDbFolder;
                 }
                 return result;
             }
@@ -62,10 +65,45 @@ namespace Erwine.Leonard.T.WordServer.WordNetDataReader
             {
                 lock (this._syncRoot)
                 {
-                    this._loadInProgress = value;
+                    this._staticDbFolder = value;
                 }
             }
         }
+
+        public string UserFriendlyPathSpec
+        {
+            get
+            {
+                string result;
+                lock (this._syncRoot)
+                {
+                    result = (this._userFriendlyPathSpec == null) ? this.StaticDbFolder : this._userFriendlyPathSpec;
+                }
+                return result;
+            }
+            private set
+            {
+                lock (this._syncRoot)
+                {
+                    this._userFriendlyPathSpec = value;
+                }
+            }
+        }
+
+        public Task<bool> ReloadTask
+        {
+            get
+            {
+                Task<bool> result;
+                lock (this._syncRoot)
+                {
+                    result = this._reloadTask;
+                }
+                return result;
+            }
+        }
+
+        public bool IsLoadInProgress { get { return this.ReloadTask != null; } }
 
         public Exception LoadError
         {
@@ -164,13 +202,24 @@ namespace Erwine.Leonard.T.WordServer.WordNetDataReader
             throw new Exception(String.Format("Value of '{0}' is not supported", Enum.GetName(partOfSpeech.GetType(), partOfSpeech)));
         }
 
-        public IndexFile() { }
+        public IndexFile(string staticDbFolder, Common.PartOfSpeech partOfSpeech) : this(staticDbFolder, partOfSpeech, null) { }
 
-        private IndexItem[] _backup = new IndexItem[0];
+        public IndexFile(string staticDbFolder, Common.PartOfSpeech partOfSpeech, string userFriendlyPathSpec)
+        {
+            if (staticDbFolder == null)
+                throw new ArgumentNullException("staticDbFolder");
+
+            if (String.IsNullOrWhiteSpace(staticDbFolder))
+                throw new ArgumentException("Folder path not provided", "staticDbFolder");
+
+            this._staticDbFolder = staticDbFolder;
+            this.PartOfSpeech = partOfSpeech;
+            this.StartReload();
+        }
 
         public void MakeInMemoryBackup()
         {
-            if (this.LoadInProgress)
+            if (this.IsLoadInProgress)
                 throw new InvalidOperationException("Load is in progress");
 
             lock (this._syncRoot)
@@ -181,7 +230,7 @@ namespace Erwine.Leonard.T.WordServer.WordNetDataReader
 
         public void RestoreFromInMemoryBackup()
         {
-            if (this.LoadInProgress)
+            if (this.IsLoadInProgress)
                 throw new InvalidOperationException("Load is in progress");
 
             lock (this._syncRoot)
@@ -191,17 +240,64 @@ namespace Erwine.Leonard.T.WordServer.WordNetDataReader
                     this.Add(item);
             }
         }
-        
-        public async Task<bool> LoadAsync(string dbFolder, Common.PartOfSpeech partOfSpeech)
-        {
-            this.PartOfSpeech = partOfSpeech;
-            if (dbFolder == null)
-                throw new ArgumentNullException("dbFolder");
 
-            this.LoadInProgress = true;
-            this.LoadError = null;
+        public async Task<bool> GetResult()
+        {
+            Task<bool> task;
+            lock (this._syncRoot)
+            {
+                task = (this._reloadTask == null) ? Task<bool>.FromResult(this._loadError == null) : this._reloadTask;
+            }
+
+            return await task;
+        }
+
+        public Task<bool> StartReload()
+        {
+            return this.ReloadAsync();
+        }
+
+        public async Task<bool> ReloadAsync()
+        {
+            Task<bool> task;
+            bool isNewTask;
+
+            lock (this._syncRoot)
+            {
+                isNewTask = (this._reloadTask == null);
+                if (isNewTask)
+                {
+                    this._reloadTask = new Task<bool>(this._Reload);
+                    this._reloadTask.Start();
+                }
+
+                task = this._reloadTask;
+            }
+
+            if (isNewTask)
+                this.LoadError = null;
+
+            bool result = await task;
+
+            if (!isNewTask)
+                return result;
+
+            this.PercentComplete = 100.0;
+            this.OnLoadFinished();
+            this.LoadError = this._reloadTask.Exception;
+
+            lock (this._syncRoot)
+            {
+                this._reloadTask = null;
+            }
+
+            return result;
+        }
+
+        private bool _Reload()
+        {
             this.BytesProcessed = 0;
-            this.PercentComplete = 0;
+            this.PercentComplete = 0.0;
             this.LinesProcessed = 0;
 
             lock (this._syncRoot)
@@ -209,89 +305,76 @@ namespace Erwine.Leonard.T.WordServer.WordNetDataReader
                 this.Clear();
             }
 
-            try
+            using (StreamReader reader = File.OpenText(Path.Combine(this.StaticDbFolder, IndexFile.PosToFileName(this.PartOfSpeech))))
             {
-                using (StreamReader reader = File.OpenText(Path.Combine(dbFolder, IndexFile.PosToFileName(partOfSpeech))))
+                string currentLine = "";
+                while (!reader.EndOfStream && String.IsNullOrWhiteSpace(currentLine) && IndexFile._commentRegex.IsMatch(currentLine))
                 {
-                    string currentLine = "";
-                    while (!reader.EndOfStream && String.IsNullOrWhiteSpace(currentLine) && IndexFile._commentRegex.IsMatch(currentLine))
+                    currentLine = reader.ReadLine();
+                    this.BytesProcessed = reader.BaseStream.Position;
+                    this.PercentComplete = Math.Round((Convert.ToDouble(reader.BaseStream.Position) / Convert.ToDouble(reader.BaseStream.Length)) * 100.0, 2);
+                    this.LinesProcessed++;
+                }
+
+                if (!reader.EndOfStream)
+                {
+                    do
                     {
-                        currentLine = await reader.ReadLineAsync();
+                        if (String.IsNullOrWhiteSpace(currentLine))
+                            continue;
+
+                        int position = 0;
+                        Match m = IndexFile._firstFourRegex.Match(currentLine);
+                        if (!m.Success)
+                            throw new WordNetParseException("Error parsing first four index file fields", IndexFile._firstFourRegex, currentLine, position);
+                        IndexItem item = new IndexItem
+                        {
+                            lemma = m.Groups["lemma"].Value.Replace('_', ' '),
+                            pos = Common.SymbolAttribute.GetEnum<Common.PartOfSpeech>(m.Groups["pos"].Value),
+                            synset_cnt = Convert.ToInt32(m.Groups["synset_cnt"].Value),
+                            ptr_symbol = new Collection<Common.PointerSymbol>(),
+                            synset_offset = new Collection<long>()
+                        };
+
+                        int p_cnt = Convert.ToInt32(m.Groups["p_cnt"].Value);
+
+                        for (int i = 0; i < p_cnt; i++)
+                        {
+                            position += m.Groups["r"].Index;
+                            m = IndexFile._pointerSymbolRegex.Match(m.Groups["r"].Value);
+                            if (!m.Success)
+                                throw new WordNetParseException(String.Format("Error parsing pointer symbol {0}", i + 1), IndexFile._pointerSymbolRegex, currentLine, position);
+                            item.ptr_symbol.Add(Common.PosAndSymbolAttribute.GetEnum<Common.PointerSymbol>(m.Groups["ptr_symbol"].Value, item.pos));
+                        }
+
+                        position += m.Groups["r"].Index;
+                        m = IndexFile._countsRegex.Match(m.Groups["r"].Value);
+                        if (!m.Success)
+                            throw new WordNetParseException("Error parsing counts", IndexFile._pointerSymbolRegex, currentLine, position);
+                        int sense_cnt = Convert.ToInt32(m.Groups["sense_cnt"].Value);
+
+                        for (int i = 0; i < sense_cnt; i++)
+                        {
+                            position += m.Groups["r"].Index;
+                            m = IndexFile._offsetRegex.Match(m.Groups["r"].Value);
+                            if (!m.Success)
+                                throw new WordNetParseException(String.Format("Error parsing offset {0}", i + 1), IndexFile._offsetRegex, currentLine, position);
+                            item.synset_offset.Add(Convert.ToInt64(m.Groups["synset_offset"].Value));
+                        }
+
+                        lock (this._syncRoot)
+                        {
+                            this.Add(item);
+                        }
+
+                        currentLine = reader.ReadLine();
+                        this.LinesProcessed++;
                         this.BytesProcessed = reader.BaseStream.Position;
                         this.PercentComplete = Math.Round((Convert.ToDouble(reader.BaseStream.Position) / Convert.ToDouble(reader.BaseStream.Length)) * 100.0, 2);
-                        this.LinesProcessed++;
-                    }
+                    } while (!reader.EndOfStream);
 
-                    if (!reader.EndOfStream)
-                    {
-                        do
-                        {
-                            if (String.IsNullOrWhiteSpace(currentLine))
-                                continue;
-
-                            int position = 0;
-                            Match m = IndexFile._firstFourRegex.Match(currentLine);
-                            if (!m.Success)
-                                throw new WordNetParseException("Error parsing first four index file fields", IndexFile._firstFourRegex, currentLine, position);
-                            IndexItem item = new IndexItem
-                            {
-                                lemma = m.Groups["lemma"].Value.Replace('_', ' '),
-                                pos = Common.SymbolAttribute.GetEnum<Common.PartOfSpeech>(m.Groups["pos"].Value),
-                                synset_cnt = Convert.ToInt32(m.Groups["synset_cnt"].Value),
-                                ptr_symbol = new Collection<Common.PointerSymbol>(),
-                                synset_offset = new Collection<long>()
-                            };
-
-                            int p_cnt = Convert.ToInt32(m.Groups["p_cnt"].Value);
-
-                            for (int i = 0; i < p_cnt; i++)
-                            {
-                                position += m.Groups["r"].Index;
-                                m = IndexFile._pointerSymbolRegex.Match(m.Groups["r"].Value);
-                                if (!m.Success)
-                                    throw new WordNetParseException(String.Format("Error parsing pointer symbol {0}", i + 1), IndexFile._pointerSymbolRegex, currentLine, position);
-                                item.ptr_symbol.Add(Common.PosAndSymbolAttribute.GetEnum<Common.PointerSymbol>(m.Groups["ptr_symbol"].Value, item.pos));
-                            }
-
-                            position += m.Groups["r"].Index;
-                            m = IndexFile._countsRegex.Match(m.Groups["r"].Value);
-                            if (!m.Success)
-                                throw new WordNetParseException("Error parsing counts", IndexFile._pointerSymbolRegex, currentLine, position);
-                            int sense_cnt = Convert.ToInt32(m.Groups["sense_cnt"].Value);
-
-                            for (int i = 0; i < sense_cnt; i++)
-                            {
-                                position += m.Groups["r"].Index;
-                                m = IndexFile._offsetRegex.Match(m.Groups["r"].Value);
-                                if (!m.Success)
-                                    throw new WordNetParseException(String.Format("Error parsing offset {0}", i + 1), IndexFile._offsetRegex, currentLine, position);
-                                item.synset_offset.Add(Convert.ToInt64(m.Groups["synset_offset"].Value));
-                            }
-
-                            lock (this._syncRoot)
-                            {
-                                this.Add(item);
-                            }
-
-                            currentLine = await reader.ReadLineAsync();
-                            this.LinesProcessed++;
-                            this.BytesProcessed = reader.BaseStream.Position;
-                            this.PercentComplete = Math.Round((Convert.ToDouble(reader.BaseStream.Position) / Convert.ToDouble(reader.BaseStream.Length)) * 100.0, 2);
-                        } while (!reader.EndOfStream);
-
-                        this.BytesProcessed = reader.BaseStream.Length;
-                    }
+                    this.BytesProcessed = reader.BaseStream.Length;
                 }
-            }
-            catch (Exception exc)
-            {
-                this.LoadError = exc;
-            }
-            finally
-            {
-                this.PercentComplete = 100.0;
-                this.LoadInProgress = false;
-                this.OnLoadFinished();
             }
 
             return this.LoadError == null;
