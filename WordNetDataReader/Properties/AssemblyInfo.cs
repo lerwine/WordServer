@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("WinWordNet")]
+[assembly: AssemblyTitle("WordNetDataReader")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("WinWordNet")]
+[assembly: AssemblyProduct("WordNetDataReader")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("414ddd35-de08-47e3-9edb-29b72d718e09")]
+[assembly: Guid("44a235c4-e786-4aad-b59a-7548c57060cd")]
 
 // Version information for an assembly consists of the following four values:
 //

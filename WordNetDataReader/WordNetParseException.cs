@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Erwine.Leonard.T.WordServer.WinWordNet
+namespace Erwine.Leonard.T.WordServer.WordNetDataReader
 {
     [Serializable]
     public class WordNetParseException : Exception
@@ -15,7 +12,7 @@ namespace Erwine.Leonard.T.WordServer.WinWordNet
         public int Position { get; private set; }
 
         public WordNetParseException(string message, Regex regex, string sourceLine, int position)
-            :base(message)
+            : base(message)
         {
             this.Pattern = regex.ToString();
             this.Options = regex.Options;
