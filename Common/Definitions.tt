@@ -1,0 +1,596 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="EnvDTE" #>
+<#@ assembly name="EnvDTE80" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="EnvDTE80" #>
+<#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Collections.ObjectModel" #>
+<#@ output extension=".cs" #>
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+
+namespace <#=this.DefaultNamespace#>
+{
+    /// <summary>
+    /// Part of speech, AKA Syntactic Category
+    /// </summary>
+	public enum PartOfSpeech : short
+	{
+<#
+SyntacticCategory syntacticCategories = new SyntacticCategory(File.ReadAllText(Path.Combine(this.TextPath, "SyntacticCategories.txt")));
+Type t = typeof(PartOfSpeech);
+var v = Enum.GetValues(t).OfType<PartOfSpeech>().Select(pos => new { Name = Enum.GetName(t, pos), Value = (short)pos, Pos = pos }).ToArray();
+for (int i = 0; i < v.Length; i++)
+{
+	var sc = syntacticCategories.FirstOrDefault(c => c.Name == v[i].Name);
+#>
+		[Symbol(<#=EnumDefinitionItem.CreateCSharpConstant(EnumDefinitionItem.PosToSymbol(v[i].Pos))#>)]
+		<#=v[i].Name#> = <#=sc.Value.Value.ToString()#><#=(i == v.Length) ? "" : ","#>
+<#
+}
+#>
+	}
+
+<#
+SynsetType synsetTypes = new SynsetType(File.ReadAllText(Path.Combine(this.TextPath, "SynsetTypeNumber.txt")),
+    File.ReadAllText(Path.Combine(this.TextPath, "SynsetTypeSymbol.txt")));
+synsetTypes.WriteDefinition(this.GenerationEnvironment);
+#>
+
+<#
+SyntacticMarker syntacticMarkers = new SyntacticMarker(File.ReadAllText(Path.Combine(this.TextPath, "SyntacticMarkers.txt")));
+syntacticMarkers.WriteDefinition(this.GenerationEnvironment);
+#>
+
+<#
+PointerSymbol pointerSymbols = new PointerSymbol(File.ReadAllText(Path.Combine(this.TextPath, "NounPointerSymbols.txt")), PartOfSpeech.Noun);
+var allPointerSymbols = pointerSymbols
+	.Concat(new PointerSymbol(File.ReadAllText(Path.Combine(this.TextPath, "VerbPointerSymbols.txt")), PartOfSpeech.Verb))
+	.Concat(new PointerSymbol(File.ReadAllText(Path.Combine(this.TextPath, "AdjectivePointerSymbols.txt")), PartOfSpeech.Adjective))
+	.Concat(new PointerSymbol(File.ReadAllText(Path.Combine(this.TextPath, "AdverbPointerSymbols.txt")), PartOfSpeech.Adverb))
+	.GroupBy(i => i.Name)
+	.Select(g => { var itm = g.First(); itm.AttributeLines = g.SelectMany(gg => gg.AttributeLines).ToArray(); return itm; }).ToArray();
+pointerSymbols.Clear();
+foreach (var ptrs in allPointerSymbols)
+	pointerSymbols.Add(ptrs);
+pointerSymbols.WriteDefinition(this.GenerationEnvironment);
+#>
+
+<#
+LexicographerFile lexicographerFiles = new LexicographerFile(File.ReadAllText(Path.Combine(this.TextPath, "LexicographerFiles.txt")));
+lexicographerFiles.WriteDefinition(this.GenerationEnvironment);
+
+// ;
+#>
+
+    public class VerbFrames : ReadOnlyDictionary<short, string>
+    {
+        private static Dictionary<short, string> _innerDictionary = (new[]
+        {
+<#
+
+Regex multipleDashesRegex = new Regex(@"-{3,}", RegexOptions.Compiled);
+Match[] matches = Regex.Matches(File.ReadAllText(Path.Combine(this.TextPath, "VerbFrames.txt")), @"^\s*(?<v>\d+)\s+(?<n>\S.*\S)\s*$", RegexOptions.Multiline)
+	.OfType<Match>().ToArray();
+
+for (int i = 0; i < matches.Length; i++)
+{
+#>
+            new { Key = (short)<#=matches[i].Groups["v"].Value#>, Value = <#=EnumDefinitionItem.CreateCSharpConstant(multipleDashesRegex.Replace(matches[i].Groups["n"].Value, "{0}"))#> }<#=(i < (matches.Length - 1)) ? "," : ""#>
+<#
+}
+#>
+        }).ToDictionary(a => a.Key, a => a.Value);
+
+        private static VerbFrames _instance = null;
+
+        public static VerbFrames Instance
+        {
+            get
+            {
+                lock (VerbFrames._innerDictionary)
+                {
+                    if (VerbFrames._instance == null)
+                        VerbFrames._instance = new VerbFrames();
+                }
+
+                return VerbFrames._instance;
+            }
+        }
+
+        public VerbFrames() : base(VerbFrames._innerDictionary) { }
+    }
+}
+<#+
+private EnvDTE.DTE _dte = null;
+public EnvDTE.DTE DTE
+{
+    get
+    {
+        if (this._dte == null)
+        {
+            if ((this._dte = (EnvDTE.DTE)(((IServiceProvider)(this.Host)).GetService(typeof(EnvDTE.DTE)))) == null)
+                throw new Exception("Unable to get current DTE");
+        }
+
+        return this._dte;
+    }
+}
+
+private EnvDTE.ProjectItem _projectItem = null;
+public EnvDTE.ProjectItem ProjectItem
+{
+    get
+    {
+        if (this._projectItem == null)
+            this._projectItem = this.DTE.Solution.FindProjectItem(this.Host.TemplateFile);
+
+        return _projectItem;
+    }
+}
+
+private EnvDTE.Project _project = null;
+
+public EnvDTE.Project Project
+{
+    get
+    {
+        if (this._project == null)
+            this._project = this.ProjectItem.ContainingProject;
+
+        return _project;
+    }
+}
+
+private string _customToolNamespace = null;
+public string CustomToolNamespace
+{
+    get
+    {
+        if (this._customToolNamespace == null)
+            this._customToolNamespace = this.ProjectItem.Properties.Item("CustomToolNamespace").Value.ToString().Trim();
+
+        return _customToolNamespace;
+    }
+}
+
+private string _defaultNamespace = null;
+public string DefaultNamespace
+{
+    get
+    {
+        if (this._defaultNamespace == null)
+        {
+            if (String.IsNullOrWhiteSpace(this.CustomToolNamespace))
+            {
+				this._defaultNamespace = System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("NamespaceHint") as string;
+				if (String.IsNullOrWhiteSpace(this._defaultNamespace))
+				{
+					System.Collections.Generic.List<string> namespaces = new System.Collections.Generic.List<string>();
+					EnvDTE.ProjectItem parent = this.ProjectItem.Collection.Parent as EnvDTE.ProjectItem;
+					while (parent != null)
+					{
+						namespaces.Insert(0, parent.Name.Replace(" ", string.Empty));
+						parent = parent.Collection.Parent as EnvDTE.ProjectItem;
+					}
+
+					if (!String.IsNullOrWhiteSpace(this.RootNamespace))
+						namespaces.Insert(0, this.RootNamespace);
+					this._defaultNamespace = string.Join(".", namespaces.ToArray());
+				}
+            }
+            else
+                this._defaultNamespace = this.CustomToolNamespace;
+        }
+
+        return _defaultNamespace;
+    }
+}
+
+private string _rootNamespace = null;
+public string RootNamespace
+{
+    get
+    {
+        if (this._rootNamespace == null)
+        {
+            EnvDTE.Property property = this.Project.Properties.OfType<EnvDTE.Property>().FirstOrDefault(p => p.Name == "RootNamespace");
+            if (property == null || (this._rootNamespace = property.Value as string) == null)
+                this._rootNamespace = String.Empty;
+        }
+
+        return _rootNamespace;
+    }
+}
+
+private string _currentPath = null;
+public string CurrentPath
+{
+    get
+    {
+        if (this._currentPath == null)
+            this._currentPath = System.IO.Path.GetDirectoryName(this.Host.ResolvePath(this.Host.TemplateFile));
+
+        return _currentPath;
+    }
+}
+
+private string _textPath = null;
+public string TextPath
+{
+    get
+    {
+        if (this._textPath == null)
+            this._textPath = System.IO.Path.Combine(this.CurrentPath, "DefinitionsSourceData");
+
+        return _textPath;
+    }
+}
+
+private string _currentFileName = null;
+public string CurrentFileName
+{
+    get
+    {
+        if (this._currentFileName == null)
+            this._currentFileName = System.IO.Path.GetFileName(this.Host.TemplateFile);
+
+        return _currentFileName;
+    }
+}
+
+public enum PartOfSpeech { Noun, Verb, Adjective, Adverb }
+
+public class EnumDefinitionItem
+{
+    private static Regex _nonAlNum = new Regex(@"[^a-z\d]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static Regex _alpha = new Regex(@"[a-z]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static Regex _ucAlpha = new Regex(@"[A-Z]{2,}", RegexOptions.Compiled);
+    private static Regex _hastNewLine = new Regex(@"[\r\n]", RegexOptions.Compiled);
+	
+    public static string PosToSymbol(PartOfSpeech partOfSpeech)
+    {
+        switch (partOfSpeech)
+        {
+            case PartOfSpeech.Noun:
+                return "n";
+            case PartOfSpeech.Verb:
+                return "v";
+            case PartOfSpeech.Adjective:
+                return "a";
+            case PartOfSpeech.Adverb:
+                return "r";
+        }
+
+        return "";
+    }
+
+    public static PartOfSpeech SymbolToPos(string symbol)
+    {
+        return Enum.GetValues(typeof(PartOfSpeech)).OfType<PartOfSpeech>().FirstOrDefault(p => String.Compare(EnumDefinitionItem.PosToSymbol(p), symbol, true) == 0);
+    }
+
+    public static string PosToName(PartOfSpeech partOfSpeech)
+    {
+        return Enum.GetName(typeof(PartOfSpeech), partOfSpeech);
+    }
+
+    public static PartOfSpeech NameToPos(string name)
+    {
+		PartOfSpeech result;
+		if (Enum.TryParse<PartOfSpeech>(new String(name.TakeWhile(c => !Char.IsWhiteSpace(c)).ToArray()), true, out result))
+			return result;
+
+		switch (name.ToLower())
+		{
+			case "adj":
+				return PartOfSpeech.Adjective;
+			case "adv":
+				return PartOfSpeech.Adverb;
+		}
+
+		return EnumDefinitionItem.SymbolToPos(name);
+    }
+
+    public static string ToIdentifier(string value)
+    {
+        string result = String.Join("_", EnumDefinitionItem._nonAlNum.Split(value.Trim())
+                .Select(s => new String(s.Take(1).Select(c => Char.ToUpper(c)).Concat(s.Skip(1).Select(c => Char.ToLower(c))).ToArray())).Where(s => s.Length > 0).ToArray());
+        if (result.Length > 0 && Char.IsDigit(result[0]))
+            result = "N" + result;
+        return result;
+    }
+
+    public static string UcFirst(string value)
+    {
+		return EnumDefinitionItem._alpha.Replace(value, (Match m) => new String(m.Value.Take(1).Select(c => Char.ToUpper(c)).Concat(m.Value.Skip(1).Select(c => Char.ToLower(c))).ToArray()));
+    }
+
+    public static string SentenceCase(string value)
+    {
+		string s = EnumDefinitionItem._ucAlpha.Replace(value, (Match m) => new String(m.Value.Take(1).Select(c => Char.ToUpper(c)).Concat(m.Value.Skip(1).Select(c => Char.ToLower(c))).ToArray()));
+		return new String(s.Take(1).Select(c => Char.ToUpper(c)).Concat(s.Skip(1)).ToArray());
+    }
+
+    public static string CreateCSharpConstant(string text)
+    {
+        return EnumDefinitionItem.CreateCSharpConstant(text, false);
+    }
+
+    public static string CreateCSharpConstant(string text, bool stringContainsRegex)
+    {
+        if (text == null)
+            return "null";
+
+        string s1 = "@\"" + text.Replace("\"", "\"\"") + "\"";
+
+        if (stringContainsRegex || EnumDefinitionItem._hastNewLine.IsMatch(text))
+            return s1;
+
+        string s2 = "\"" + new String(text.SelectMany(c =>
+        {
+            switch (c)
+            {
+                case '\r':
+                    return "\\r".ToArray();
+                case '\n':
+                    return "\\n".ToArray();
+                case '\t':
+                    return "\\t".ToArray();
+                case '\\':
+                    return "\\\\".ToArray();
+                case '"':
+                    return "\\\"".ToArray();
+            }
+
+            return new char[] { c };
+        }).ToArray()) + "\"";
+
+        return (s1.Length > 1024 || s1.Length > s2.Length) ? s2 : s1;
+    }
+
+    private string _name = "";
+    private string _nameText = "";
+
+    public string NameText
+    {
+        get { return this._nameText; }
+        set
+        {
+            this._nameText = (value == null) ? "" : value;
+            this._name = EnumDefinitionItem.ToIdentifier(this._nameText);
+        }
+    }
+
+    public string Name { get { return this._name; } }
+    public long? Value { get; set; }
+    public PartOfSpeech Pos { get; set; }
+
+    public string[] AttributeLines { get; set; }
+
+    public IEnumerable<string> GetLines()
+    {
+        string[] a = new string[] { (this.Value.HasValue) ? String.Format("{0} = {1}", this.Name, this.Value.Value.ToString()) : this.Name };
+        return (this.AttributeLines == null) ? a : this.AttributeLines.Where(s => !String.IsNullOrWhiteSpace(s)).Concat(a);
+    }
+}
+
+public abstract class EnumDefinitionFactory : Collection<EnumDefinitionItem>
+{
+    public abstract string Name { get; }
+    public virtual string BaseType { get { return ""; } }
+    public abstract Regex Regex { get; }
+    protected EnumDefinitionFactory(string input)
+        : base()
+    {
+        foreach (Match m in this.Regex.Matches(input))
+            this.Add(this.Create(m));
+    }
+
+    public abstract EnumDefinitionItem Create(Match match);
+
+    public void WriteDefinition(StringBuilder host)
+    {
+        host.AppendFormat("\tpublic enum {0}", this.Name);
+        if (!String.IsNullOrWhiteSpace(this.BaseType))
+            host.AppendFormat(" : {0}", this.BaseType);
+        host.AppendLine("");
+        string prevLine = "\t{";
+        Func<string, string> shiftLine = (string s) =>
+        {
+            string r = prevLine;
+            prevLine = "\t\t" + s;
+            return r;
+        };
+        foreach (string s in this.Take(1).SelectMany(i => i.GetLines().Select(l => shiftLine(l)))
+            .Concat(this.Skip(1).SelectMany(i =>
+                {
+                    prevLine += ",";
+                    return i.GetLines().Select(l => shiftLine(l));
+                })))
+            host.AppendLine(s);
+
+        host.AppendLine(prevLine);
+        host.AppendLine("\t}");
+    }
+}
+
+public abstract class NumberedEnumDefinitionFactory : EnumDefinitionFactory
+{
+    private static readonly Regex _numberAndNameRegex = new Regex(@"^\s*(?<v>\d+)\s+(?<n>\S.*\S)\s*$", RegexOptions.Multiline | RegexOptions.Compiled);
+
+    public override Regex Regex { get { return NumberedEnumDefinitionFactory._numberAndNameRegex; } }
+
+    protected NumberedEnumDefinitionFactory(string input) : base(input) { }
+
+    public override EnumDefinitionItem Create(Match match)
+    {
+        return new EnumDefinitionItem { NameText = match.Groups["n"].Value, Value = Convert.ToInt64(match.Groups["v"].Value) };
+    }
+
+    public abstract override string Name { get; }
+}
+
+public class SyntacticCategory : NumberedEnumDefinitionFactory
+{
+    public override string Name { get { return "SyntacticCategory"; } }
+    public override string BaseType { get { return "short"; } }
+    public SyntacticCategory(string input) : base(input) { }
+}
+
+public class SynsetType : NumberedEnumDefinitionFactory
+{
+    public override string Name { get { return "SynsetType"; } }
+    public override string BaseType { get { return "short"; } }
+    public SynsetType(string numberedInput, string symbolInput)
+        : base(numberedInput)
+    {
+        SynsetSymbol sym = new SynsetSymbol(symbolInput);
+
+        foreach (EnumDefinitionItem item in this)
+        {
+            EnumDefinitionItem matching = sym.FirstOrDefault(i => i.Name == item.Name);
+            item.AttributeLines = matching.AttributeLines;
+            item.Pos = matching.Pos;
+        }
+    }
+}
+
+public abstract class SymbolEnumDefinitionFactory : EnumDefinitionFactory
+{
+    private static readonly Regex _symbolNameAndNameRegex = new Regex(@"^\s*(?<s>\S{1,2})\s+(?<n>\S.*\S)\s*$", RegexOptions.Compiled | RegexOptions.Multiline);
+
+    public override Regex Regex { get { return SymbolEnumDefinitionFactory._symbolNameAndNameRegex; } }
+
+    protected SymbolEnumDefinitionFactory(string input) : base(input) { }
+
+    public override EnumDefinitionItem Create(Match match)
+    {
+        EnumDefinitionItem result = new EnumDefinitionItem { NameText = match.Groups["n"].Value };
+        this.OnCreate(result, match.Groups["s"].Value);
+        return result;
+    }
+
+    protected virtual void OnCreate(EnumDefinitionItem result, string symbol) { }
+
+    public abstract override string Name { get; }
+}
+
+public class SynsetSymbol : SymbolEnumDefinitionFactory
+{
+    private static readonly Regex _posWord = new Regex(@"^(?<pos>\S+)(\s+.*)?$", RegexOptions.Compiled);
+
+    public override string Name { get { return "SynsetSymbol"; } }
+    public SynsetSymbol(string input) : base(input) { }
+    protected override void OnCreate(EnumDefinitionItem result, string symbol)
+    {
+        result.Pos = EnumDefinitionItem.NameToPos(result.NameText);
+        result.AttributeLines = new string[]
+        {   
+            String.Format("[PosAndSymbol(PartOfSpeech.{0}, {1}, Description = {2})]", Enum.GetName(typeof(PartOfSpeech), result.Pos), 
+				EnumDefinitionItem.CreateCSharpConstant(symbol), EnumDefinitionItem.CreateCSharpConstant(EnumDefinitionItem.SentenceCase(result.NameText)))
+        };
+
+        base.OnCreate(result, symbol);
+    }
+}
+
+public class PointerSymbol : SymbolEnumDefinitionFactory
+{
+    public PartOfSpeech Pos { get; private set; }
+    public override string Name { get { return "PointerSymbol"; } }
+    public override string BaseType { get { return "short"; } }
+    public PointerSymbol(string input, PartOfSpeech partOfSpeech)
+        : base(input)
+    {
+        this.Pos = partOfSpeech;
+		for (int i = 0; i < this.Count; i++)
+        {
+            this[i].Pos = Pos;
+			this[i].Value = i + 1;
+            this[i].AttributeLines = new string[]
+			{
+				String.Format("[PosAndSymbol(PartOfSpeech.{0}, {1}, Description = {2})]", Enum.GetName(typeof(PartOfSpeech), this.Pos), 
+					EnumDefinitionItem.CreateCSharpConstant(this[i].AttributeLines[0]), EnumDefinitionItem.CreateCSharpConstant(EnumDefinitionItem.SentenceCase(this[i].NameText)))
+			};
+        }
+    }
+
+    protected override void OnCreate(EnumDefinitionItem result, string symbol)
+    {
+        result.AttributeLines = new string[] { symbol };
+        base.OnCreate(result, symbol);
+    }
+}
+
+public class LexicographerFile : EnumDefinitionFactory
+{
+    public static readonly Regex _lexicographerFileRegex = new Regex(@"(?<v>\d{2})\s+(?<pos>\S+)\.(?<n>\S+)\s+(?<d>\S.*?)\s*$", RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase);
+	
+    public override string BaseType { get { return "short"; } }
+
+    public override Regex Regex { get { return LexicographerFile._lexicographerFileRegex; } }
+
+    public LexicographerFile(string input) : base(input) { }
+
+    public override EnumDefinitionItem Create(Match match)
+    {
+        return new EnumDefinitionItem
+		{
+			NameText = String.Format("{0}_{1}", match.Groups["pos"].Value, match.Groups["n"].Value),
+			AttributeLines = new string[]
+			{
+				String.Format("[PosValue(PartOfSpeech.{0}, Description = {1})]", 
+					Enum.GetName(typeof(PartOfSpeech), EnumDefinitionItem.NameToPos(match.Groups["pos"].Value)),
+					EnumDefinitionItem.CreateCSharpConstant(EnumDefinitionItem.SentenceCase(match.Groups["d"].Value)))
+			},
+			Value = Convert.ToInt16(match.Groups["v"].Value)
+		};
+    }
+
+    public override string Name { get { return "LexicographerFile"; } }
+}
+
+public class SyntacticMarker : EnumDefinitionFactory
+{
+    public static readonly Regex _syntacticMarkerRegex = new Regex(@"^\((?<s>\S+)\)\s+(?<d>\S(.*\S)?)\s*$", RegexOptions.Compiled | RegexOptions.Multiline);
+	
+    public override string BaseType { get { return "short"; } }
+
+    public override Regex Regex { get { return SyntacticMarker._syntacticMarkerRegex; } }
+
+    public SyntacticMarker(string input)
+		: base(input)
+	{
+		this.Insert(0, new EnumDefinitionItem { NameText = "None", AttributeLines = new string[] { "[Symbol(\"\", Description = \"No syntactic marker\")]"} });
+		for (int i = 0; i < this.Count; i++)
+			this[i].Value = i;
+	}
+
+    public override EnumDefinitionItem Create(Match match)
+    {
+        return new EnumDefinitionItem
+		{
+			NameText = match.Groups["d"].Value,
+			AttributeLines = new string[]
+			{
+				String.Format("[Symbol({0}, Description = {1})]", 
+					EnumDefinitionItem.CreateCSharpConstant(match.Groups["s"].Value),
+					EnumDefinitionItem.CreateCSharpConstant(EnumDefinitionItem.SentenceCase(match.Groups["d"].Value)))
+			}
+		};
+    }
+
+    public override string Name { get { return "SyntacticMarker"; } }
+}
+
+
+
+#>

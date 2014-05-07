@@ -1,0 +1,2 @@
+﻿# Taken from WNDB(5WN)
+Syntactic category: n  for noun files, v  for verb files, a  for adjective files, r  for adverb files. 

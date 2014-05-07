@@ -1,0 +1,4 @@
+﻿# Taken from WNINPUT(5WN)
+(p)     predicate position 
+(a)     prenominal (attributive) position 
+(ip)     immediately postnominal position         

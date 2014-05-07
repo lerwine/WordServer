@@ -1,1 +1,1 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="WordServer.Service1" CodeBehind="WordNetService.svc.cs" %>
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="Erwine.Leonard.T.WordServer.Service1" CodeBehind="WordNetService.svc.cs" %>
