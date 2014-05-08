@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -185,6 +183,22 @@ namespace Erwine.Leonard.T.WordServer.WordNetDataReader
             }
         }
 
+        public IndexFile(string staticDbFolder, Common.PartOfSpeech partOfSpeech) : this(staticDbFolder, partOfSpeech, null) { }
+
+        public IndexFile(string staticDbFolder, Common.PartOfSpeech partOfSpeech, string userFriendlyPathSpec)
+        {
+            if (staticDbFolder == null)
+                throw new ArgumentNullException("staticDbFolder");
+
+            if (String.IsNullOrWhiteSpace(staticDbFolder))
+                throw new ArgumentException("Folder path not provided", "staticDbFolder");
+
+            this.StaticDbFolder = staticDbFolder;
+            this.UserFriendlyPathSpec = userFriendlyPathSpec;
+            this.PartOfSpeech = partOfSpeech;
+            this.StartReloadAsync();
+        }
+
         public static string PosToFileName(Common.PartOfSpeech partOfSpeech)
         {
             switch (partOfSpeech)
@@ -200,21 +214,6 @@ namespace Erwine.Leonard.T.WordServer.WordNetDataReader
             }
 
             throw new Exception(String.Format("Value of '{0}' is not supported", Enum.GetName(partOfSpeech.GetType(), partOfSpeech)));
-        }
-
-        public IndexFile(string staticDbFolder, Common.PartOfSpeech partOfSpeech) : this(staticDbFolder, partOfSpeech, null) { }
-
-        public IndexFile(string staticDbFolder, Common.PartOfSpeech partOfSpeech, string userFriendlyPathSpec)
-        {
-            if (staticDbFolder == null)
-                throw new ArgumentNullException("staticDbFolder");
-
-            if (String.IsNullOrWhiteSpace(staticDbFolder))
-                throw new ArgumentException("Folder path not provided", "staticDbFolder");
-
-            this._staticDbFolder = staticDbFolder;
-            this.PartOfSpeech = partOfSpeech;
-            this.StartReload();
         }
 
         public void MakeInMemoryBackup()
@@ -241,7 +240,7 @@ namespace Erwine.Leonard.T.WordServer.WordNetDataReader
             }
         }
 
-        public async Task<bool> GetResult()
+        public async Task<bool> GetResultAsync()
         {
             Task<bool> task;
             lock (this._syncRoot)
@@ -252,7 +251,7 @@ namespace Erwine.Leonard.T.WordServer.WordNetDataReader
             return await task;
         }
 
-        public Task<bool> StartReload()
+        public Task<bool> StartReloadAsync()
         {
             return this.ReloadAsync();
         }
@@ -329,11 +328,11 @@ namespace Erwine.Leonard.T.WordServer.WordNetDataReader
                             throw new WordNetParseException("Error parsing first four index file fields", IndexFile._firstFourRegex, currentLine, position);
                         IndexItem item = new IndexItem
                         {
-                            lemma = m.Groups["lemma"].Value.Replace('_', ' '),
-                            pos = Common.SymbolAttribute.GetEnum<Common.PartOfSpeech>(m.Groups["pos"].Value),
-                            synset_cnt = Convert.ToInt32(m.Groups["synset_cnt"].Value),
-                            ptr_symbol = new Collection<Common.PointerSymbol>(),
-                            synset_offset = new Collection<long>()
+                            Word = m.Groups["lemma"].Value.Replace('_', ' '),
+                            PartOfSpeech = Common.SymbolAttribute.GetEnum<Common.PartOfSpeech>(m.Groups["pos"].Value),
+                            SynsetCount = Convert.ToInt32(m.Groups["synset_cnt"].Value),
+                            PointerSymbols = new Collection<Common.PointerSymbol>(),
+                            SynsetOffsets = new Collection<long>()
                         };
 
                         int p_cnt = Convert.ToInt32(m.Groups["p_cnt"].Value);
@@ -344,7 +343,7 @@ namespace Erwine.Leonard.T.WordServer.WordNetDataReader
                             m = IndexFile._pointerSymbolRegex.Match(m.Groups["r"].Value);
                             if (!m.Success)
                                 throw new WordNetParseException(String.Format("Error parsing pointer symbol {0}", i + 1), IndexFile._pointerSymbolRegex, currentLine, position);
-                            item.ptr_symbol.Add(Common.PosAndSymbolAttribute.GetEnum<Common.PointerSymbol>(m.Groups["ptr_symbol"].Value, item.pos));
+                            item.PointerSymbols.Add(Common.PosAndSymbolAttribute.GetEnum<Common.PointerSymbol>(m.Groups["ptr_symbol"].Value, item.PartOfSpeech));
                         }
 
                         position += m.Groups["r"].Index;
@@ -359,7 +358,7 @@ namespace Erwine.Leonard.T.WordServer.WordNetDataReader
                             m = IndexFile._offsetRegex.Match(m.Groups["r"].Value);
                             if (!m.Success)
                                 throw new WordNetParseException(String.Format("Error parsing offset {0}", i + 1), IndexFile._offsetRegex, currentLine, position);
-                            item.synset_offset.Add(Convert.ToInt64(m.Groups["synset_offset"].Value));
+                            item.SynsetOffsets.Add(Convert.ToInt64(m.Groups["synset_offset"].Value));
                         }
 
                         lock (this._syncRoot)

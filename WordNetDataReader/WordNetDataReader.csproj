@@ -40,9 +40,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataFile.cs" />
+    <Compile Include="DataItem.cs" />
     <Compile Include="IndexFile.cs" />
     <Compile Include="IndexItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SynsetPointer.cs" />
+    <Compile Include="SynsetWord.cs" />
+    <Compile Include="VerbFrame.cs" />
     <Compile Include="WordNetParseException.cs" />
   </ItemGroup>
   <ItemGroup>

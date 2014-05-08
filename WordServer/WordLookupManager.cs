@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -35,6 +33,11 @@ namespace Erwine.Leonard.T.WordServer
         protected WordNetDataReader.IndexFile AdjectiveIndex { get; private set; }
         protected WordNetDataReader.IndexFile AdverbIndex { get; private set; }
 
+        protected WordNetDataReader.DataFile NounData { get; private set; }
+        protected WordNetDataReader.DataFile VerbData { get; private set; }
+        protected WordNetDataReader.DataFile AdjectiveData { get; private set; }
+        protected WordNetDataReader.DataFile AdverbData { get; private set; }
+
         public LoadStatus NounStatus { get; private set; }
         public LoadStatus VerbStatus { get; private set; }
         public LoadStatus AdjectiveStatus { get; private set; }
@@ -63,50 +66,104 @@ namespace Erwine.Leonard.T.WordServer
                     string dbFolder = this._applicationInstance.Server.MapPath("~/App_Data");
                     this.NounIndex = new WordNetDataReader.IndexFile(dbFolder, Common.PartOfSpeech.Noun);
                     this.NounStatus = new LoadStatus(this.NounIndex);
+                    this.NounData = new WordNetDataReader.DataFile(dbFolder, Common.PartOfSpeech.Noun);
                     this.VerbIndex = new WordNetDataReader.IndexFile(dbFolder, Common.PartOfSpeech.Verb);
                     this.VerbStatus = new LoadStatus(this.VerbIndex);
+                    this.VerbData = new WordNetDataReader.DataFile(dbFolder, Common.PartOfSpeech.Verb);
                     this.AdjectiveIndex = new WordNetDataReader.IndexFile(dbFolder, Common.PartOfSpeech.Adjective);
                     this.AdjectiveStatus = new LoadStatus(this.AdjectiveIndex);
+                    this.AdjectiveData = new WordNetDataReader.DataFile(dbFolder, Common.PartOfSpeech.Adjective);
                     this.AdverbIndex = new WordNetDataReader.IndexFile(dbFolder, Common.PartOfSpeech.Adverb);
                     this.AdverbStatus = new LoadStatus(this.AdverbIndex);
+                    this.AdverbData = new WordNetDataReader.DataFile(dbFolder, Common.PartOfSpeech.Adverb);
                 }
             }
         }
 
-        public static Common.LongRunningJob<WordNetDataReader.IndexItem[]> LookupWordInstances(string word)
+        public static Common.LongRunningJob<WordNetDataReader.IndexItem[]> CreateLookupWordInstancesJob(string word)
         {
-            return new Common.LongRunningJob<WordNetDataReader.IndexItem[]>(WordLookupManager.Instance._LookupWordInstances(word));
+            return new Common.LongRunningJob<WordNetDataReader.IndexItem[]>(WordLookupManager.Instance._LookupWordInstancesAsync(word));
         }
 
-        private async Task<WordNetDataReader.IndexItem[]> _LookupWordInstances(string word)
+        private async Task<WordNetDataReader.IndexItem[]> _LookupWordInstancesAsync(string word)
         {
             if (this._applicationInstance.UseConnectedDatabase)
-                return await this._LookupWordInstancesDb(word);
+                return await this._LookupWordInstancesDbAsync(word);
 
-            return await this._LookupWordInstancesStatic(word);
+            return await this._LookupWordInstancesStaticAsync(word);
         }
 
-        private async Task<WordNetDataReader.IndexItem[]> _LookupWordInstancesStatic(string word)
+        private async Task<WordNetDataReader.IndexItem[]> _LookupWordInstancesStaticAsync(string word)
         {
             if (String.IsNullOrWhiteSpace(word))
                 return new WordNetDataReader.IndexItem[0];
 
-            await this.NounIndex.GetResult();
-            await this.VerbIndex.GetResult();
-            await this.AdjectiveIndex.GetResult();
-            await this.AdverbIndex.GetResult();
+            await this.NounIndex.GetResultAsync();
+            await this.VerbIndex.GetResultAsync();
+            await this.AdjectiveIndex.GetResultAsync();
+            await this.AdverbIndex.GetResultAsync();
 
             string w = WordLookupManager._normalizeWordRegex.Replace(word.Trim(), " ").ToLower();
 
-            return this.NounIndex.Where(i => i.lemma == w)
-                .Concat(this.VerbIndex.Where(i => i.lemma == w))
-                .Concat(this.AdjectiveIndex.Where(i => i.lemma == w))
-                .Concat(this.AdverbIndex.Where(i => i.lemma == w)).ToArray();
+            return this.NounIndex.Where(i => i.Word == w)
+                .Concat(this.VerbIndex.Where(i => i.Word == w))
+                .Concat(this.AdjectiveIndex.Where(i => i.Word == w))
+                .Concat(this.AdverbIndex.Where(i => i.Word == w)).ToArray();
         }
 
-        private async Task<WordNetDataReader.IndexItem[]> _LookupWordInstancesDb(string word)
+        private async Task<WordNetDataReader.IndexItem[]> _LookupWordInstancesDbAsync(string word)
         {
             throw new NotImplementedException();
         }
+
+        public static Common.LongRunningJob<WordNetDataReader.DataItem[]> CreateGetWordsJob(WordNetDataReader.IndexItem[] indexItems)
+        {
+            return new Common.LongRunningJob<WordNetDataReader.DataItem[]>(WordLookupManager.Instance._GetWordsAsync(indexItems));
+        }
+
+        private async Task<WordNetDataReader.DataItem[]> _GetWordsAsync(WordNetDataReader.IndexItem[] indexItems)
+        {
+            if (this._applicationInstance.UseConnectedDatabase)
+                return await this._GetWordsDbAsync(indexItems);
+
+            return await this._GetWordsStaticAsync(indexItems);
+        }
+
+        private Task<WordNetDataReader.DataItem[]> _GetWordsStaticAsync(WordNetDataReader.IndexItem[] indexItems)
+        {
+            Task<WordNetDataReader.DataItem[]> task = new Task<WordNetDataReader.DataItem[]>(() => indexItems.AsParallel().SelectMany(i =>
+            {
+                Task<WordNetDataReader.DataItem[]> t;
+                switch (i.PartOfSpeech)
+                {
+                    case Common.PartOfSpeech.Noun:
+                        t = this.NounData.GetWordsAsync(i.SynsetOffsets);
+                        break;
+                    case Common.PartOfSpeech.Verb:
+                        t = this.VerbData.GetWordsAsync(i.SynsetOffsets);
+                        break;
+                    case Common.PartOfSpeech.Adjective:
+                        t = this.AdjectiveData.GetWordsAsync(i.SynsetOffsets);
+                        break;
+                    case Common.PartOfSpeech.Adverb:
+                        t = this.AdverbData.GetWordsAsync(i.SynsetOffsets);
+                        break;
+                    default:
+                        return null;
+                }
+                t.Wait();
+                return t.Result;
+            }).ToArray());
+
+            task.Start();
+
+            return task;
+        }
+
+        private async Task<WordNetDataReader.DataItem[]> _GetWordsDbAsync(WordNetDataReader.IndexItem[] indexItems)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

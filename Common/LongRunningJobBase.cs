@@ -117,7 +117,7 @@ namespace Erwine.Leonard.T.WordServer.Common
     {
         public LongRunningJobBase(TTaskType task) : base(task) { }
 
-        public static new TLongRunningJobType GetJob(Guid id)
+        public static TLongRunningJobType GetJob(Guid id)
         {
             return LongRunningJobBase.GetJob<TLongRunningJobType, TTaskType>(id);
         }
