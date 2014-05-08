@@ -8,10 +8,17 @@ namespace Erwine.Leonard.T.WordServer.Common
     public class LongRunningJobBase
     {
         private static Collection<LongRunningJobBase> _jobs = new Collection<LongRunningJobBase>();
-        public static readonly TimeSpan DefaultMaxJobAge = new TimeSpan(0, 5, 0);
-        public static TimeSpan MaxJobAge = new TimeSpan(0, 5, 0);
+
         private Task _bgTask;
         private Task _nestedTask;
+
+        public static event EventHandler<JobsFlushingEventArgs> JobsFlushing;
+        public static event EventHandler<JobsFlushedEventArgs> JobsFlushed;
+        public event EventHandler<JobEventArgs<Task>> JobCompleting;
+        public event EventHandler<JobEventArgs<Task>> JobCompleted;
+
+        public static readonly TimeSpan DefaultMaxJobAge = new TimeSpan(0, 5, 0);
+        public static TimeSpan MaxJobAge = new TimeSpan(0, 5, 0);
 
         public Guid ID { get; private set; }
         public bool IsCompleted { get; private set; }
@@ -57,10 +64,37 @@ namespace Erwine.Leonard.T.WordServer.Common
         {
             DateTime now = DateTime.Now;
 
-            LongRunningJobBase[] expired = LongRunningJobBase._jobs.Where(j => j.IsCompleted && j.ExpiresAt < now).ToArray();
+            LongRunningJobBase[] expired = LongRunningJobBase.RaiseJobsFlushing(LongRunningJobBase._jobs.ToArray(), now);
 
             foreach (LongRunningJobBase job in expired)
                 LongRunningJobBase._jobs.Remove(job);
+
+            LongRunningJobBase.RaiseJobsFlushed(expired, LongRunningJobBase._jobs.ToArray());
+        }
+
+        private static LongRunningJobBase[] RaiseJobsFlushing(LongRunningJobBase[] allJobs, DateTime expirationTimeStamp)
+        {
+            JobsFlushingEventArgs args = new JobsFlushingEventArgs(allJobs, expirationTimeStamp);
+            LongRunningJobBase.OnJobsFlushing(args);
+            return args.ExpiredJobs;
+        }
+
+        protected virtual static void OnJobsFlushing(JobsFlushingEventArgs args)
+        {
+            args.ExpiredJobs = LongRunningJobBase._jobs.Where(j => j.IsCompleted && j.ExpiresAt < args.ExpirationTimeStamp).ToArray();
+            if (LongRunningJobBase.JobsFlushing != null)
+                LongRunningJobBase.JobsFlushing(null, args);
+        }
+
+        private static void RaiseJobsFlushed(LongRunningJobBase[] expiredJobs, LongRunningJobBase[] currentJobs)
+        {
+            LongRunningJobBase.OnJobsFlushed(new JobsFlushedEventArgs(expiredJobs, currentJobs));
+        }
+
+        protected virtual static void OnJobsFlushed(JobsFlushedEventArgs args)
+        {
+            if (LongRunningJobBase.JobsFlushed != null)
+                LongRunningJobBase.JobsFlushed(null, args);
         }
 
         private void _Worker()
@@ -79,7 +113,7 @@ namespace Erwine.Leonard.T.WordServer.Common
                 {
                     try
                     {
-                        this.OnCompleted(this._nestedTask);
+                        this.RaiseJobCompleting();
                     }
                     catch
                     {
@@ -87,27 +121,81 @@ namespace Erwine.Leonard.T.WordServer.Common
                     }
                     finally
                     {
-                        try
-                        {
-                            this.Error = this._nestedTask.Exception;
-                        }
-                        catch { }
-                        finally
-                        {
-                            LongRunningJobBase._FlushJobs();
-                            this.ExpiresAt = DateTime.Now.Add((LongRunningJobBase.MaxJobAge > TimeSpan.Zero) ? LongRunningJobBase.MaxJobAge : LongRunningJobBase.DefaultMaxJobAge);
-                            this.IsCompleted = true;
-                        }
+                        this.RaiseJobCompleted();
                     }
                 }
             }
         }
 
-        protected virtual void OnCompleted(Task task) { }
+        private void RaiseJobCompleting()
+        {
+            this.OnJobCompleting(new JobEventArgs<Task>(this, this._nestedTask));
+        }
+
+        protected virtual void OnJobCompleting(JobEventArgs<Task> args)
+        {
+            if (this.JobCompleting != null)
+                this.JobCompleting(this, args);
+        }
+
+        private void RaiseJobCompleted()
+        {
+            this.OnJobCompleted(new JobEventArgs<Task>(this, this._nestedTask));
+        }
+
+        protected virtual void OnJobCompleted(JobEventArgs<Task> args)
+        {
+            try
+            {
+                this.Error = args.Task.Exception;
+            }
+            catch { }
+            finally
+            {
+                LongRunningJobBase._FlushJobs();
+                args.Job.ExpiresAt = DateTime.Now.Add((LongRunningJobBase.MaxJobAge > TimeSpan.Zero) ? LongRunningJobBase.MaxJobAge : LongRunningJobBase.DefaultMaxJobAge);
+                args.Job.IsCompleted = true;
+                if (this.JobCompleted != null)
+                    this.JobCompleted(this, args);
+            }
+        }
+
+        public event EventHandler<JobWaitingEventArgs<Task>> JobWaiting;
+        public event EventHandler<JobWaitFinishedEventArgs<Task>> JobWaitFinished;
 
         public bool Wait(int millisecondsTimeout)
         {
-            return (this.IsCompleted || this._bgTask.Wait(millisecondsTimeout));
+            if (this.IsCompleted)
+                return true;
+
+            millisecondsTimeout = this.RaiseJobWaiting(millisecondsTimeout);
+            return this.RaiseJobWaitFinished(millisecondsTimeout, this._bgTask.Wait(args.MillisecondsTimeout));
+        }
+
+        private int RaiseJobWaiting(int millisecondsTimeout)
+        {
+            JobWaitingEventArgs<Task> args = new JobWaitingEventArgs<Task>(this, this._nestedTask, millisecondsTimeout);
+            this.OnJobWaiting(args);
+            return args.MillisecondsTimeout;
+        }
+
+        protected virtual void OnJobWaiting(JobWaitingEventArgs<Task> args)
+        {
+            if (this.JobWaiting != null)
+                this.JobWaiting(this, args);
+        }
+
+        private bool RaiseJobWaitFinished(int millisecondsTimeout, bool executionCompleted)
+        {
+            JobWaitFinishedEventArgs<Task> args = new JobWaitFinishedEventArgs<Task>(this, this._nestedTask, millisecondsTimeout, executionCompleted);
+            this.OnJobWaitFinished(args);
+            return args.ExecutionCompleted;
+        }
+
+        private void OnJobWaitFinished(JobWaitFinishedEventArgs<Task> args)
+        {
+            if (this.JobWaitFinished != null)
+                this.JobWaitFinished(this, args);
         }
     }
 
@@ -124,10 +212,18 @@ namespace Erwine.Leonard.T.WordServer.Common
 
         protected virtual void OnCompleted(TTaskType task) { }
 
-        protected override void OnCompleted(Task task)
+        protected virtual void OnJobCompleted(JobEventArgs<TTaskType> args)
         {
-            base.OnCompleted(task);
-            this.OnCompleted(task as TTaskType);
+            this.OnCompleted(args.Task);
+        }
+
+        protected override void OnJobCompleted(JobEventArgs<Task> args)
+        {
+            base.OnJobCompleted(args);
+            JobEventArgs<TTaskType> args2 = new JobEventArgs<TTaskType>(args.Job, args.Task as TTaskType);
+            this.OnJobCompleted(args2);
+            args.Job = args2.Job;
+            args.Task = args2.Task;
         }
     }
 }

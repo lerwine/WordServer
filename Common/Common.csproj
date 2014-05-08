@@ -44,6 +44,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="JobEventArgs.cs" />
+    <Compile Include="JobsFlushedEventArgs.cs" />
+    <Compile Include="JobsFlushingEventArgs.cs" />
+    <Compile Include="JobWaitFinishedEventArgs.cs" />
+    <Compile Include="JobWaitingEventArgs.cs" />
     <Compile Include="LongRunningJob.cs" />
     <Compile Include="LongRunningJobBase.cs" />
     <Compile Include="PosAndSymbolAttribute.cs" />
