@@ -112,8 +112,6 @@ File Number   Name   Contents
             actualDescription = PosValueAttribute.GetDescription<LexicographerFile>(target);
             Assert.AreEqual(expectedDescription, actualDescription);
 
-            // TODO: Fix targets and descriptions
-
             /*
 03  noun.Tops  unique beginner for nouns  
              */
@@ -124,21 +122,23 @@ File Number   Name   Contents
             expectedPos = PartOfSpeech.Noun;
             actualPos = PosValueAttribute.GetPartOfSpeech<LexicographerFile>(target);
             Assert.AreEqual(expectedPos, actualPos);
-            expectedDescription = "Relational adjectives (pertainyms)";
+            expectedDescription = "Unique beginner for nouns";
             actualDescription = PosValueAttribute.GetDescription<LexicographerFile>(target);
             Assert.AreEqual(expectedDescription, actualDescription);
+
+            // TODO: Fix targets and descriptions
 
             /*
 04  noun.act  nouns denoting acts or actions  
              */
             expectedValue = 4;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Act;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
             actualPos = PosValueAttribute.GetPartOfSpeech<LexicographerFile>(target);
             Assert.AreEqual(expectedPos, actualPos);
-            expectedDescription = "Relational adjectives (pertainyms)";
+            expectedDescription = "Nouns denoting acts or actions";
             actualDescription = PosValueAttribute.GetDescription<LexicographerFile>(target);
             Assert.AreEqual(expectedDescription, actualDescription);
 
@@ -146,7 +146,7 @@ File Number   Name   Contents
 05  noun.animal  nouns denoting animals  
              */
             expectedValue = 5;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Animal;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -160,7 +160,7 @@ File Number   Name   Contents
 06  noun.artifact  nouns denoting man-made objects  
              */
             expectedValue = 6;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Artifact;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -174,7 +174,7 @@ File Number   Name   Contents
 07  noun.attribute  nouns denoting attributes of people and objects  
              */
             expectedValue = 7;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Attribute;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -188,7 +188,7 @@ File Number   Name   Contents
 08  noun.body  nouns denoting body parts  
              */
             expectedValue = 8;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Body;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -202,7 +202,7 @@ File Number   Name   Contents
 09  noun.cognition  nouns denoting cognitive processes and contents  
              */
             expectedValue = 9;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Cognition;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -216,7 +216,7 @@ File Number   Name   Contents
 10  noun.communication  nouns denoting communicative processes and contents  
              */
             expectedValue = 10;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Communication;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -230,7 +230,7 @@ File Number   Name   Contents
 11  noun.event  nouns denoting natural events  
              */
             expectedValue = 11;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Event;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -244,7 +244,7 @@ File Number   Name   Contents
 12  noun.feeling  nouns denoting feelings and emotions  
              */
             expectedValue = 12;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Feeling;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -258,7 +258,7 @@ File Number   Name   Contents
 13  noun.food  nouns denoting foods and drinks  
              */
             expectedValue = 13;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Food;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -272,7 +272,7 @@ File Number   Name   Contents
 14  noun.group  nouns denoting groupings of people or objects  
              */
             expectedValue = 14;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Group;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -286,7 +286,7 @@ File Number   Name   Contents
 15  noun.location  nouns denoting spatial position  
              */
             expectedValue = 15;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Location;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -300,7 +300,7 @@ File Number   Name   Contents
 16  noun.motive  nouns denoting goals  
              */
             expectedValue = 16;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Motive;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -314,7 +314,7 @@ File Number   Name   Contents
 17  noun.object  nouns denoting natural objects (not man-made)  
              */
             expectedValue = 17;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Object;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -328,7 +328,7 @@ File Number   Name   Contents
 18  noun.person  nouns denoting people  
              */
             expectedValue = 18;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Person;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -342,7 +342,7 @@ File Number   Name   Contents
 19  noun.phenomenon  nouns denoting natural phenomena  
              */
             expectedValue = 19;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Phenomenon;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -356,7 +356,7 @@ File Number   Name   Contents
 20  noun.plant  nouns denoting plants  
              */
             expectedValue = 20;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Plant;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -370,7 +370,7 @@ File Number   Name   Contents
 21  noun.possession  nouns denoting possession and transfer of possession 
              */
             expectedValue = 21;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Possession;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -384,7 +384,7 @@ File Number   Name   Contents
 22  noun.process  nouns denoting natural processes  
              */
             expectedValue = 22;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Process;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -398,7 +398,7 @@ File Number   Name   Contents
 23  noun.quantity  nouns denoting quantities and units of measure  
              */
             expectedValue = 23;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Quantity;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -412,7 +412,7 @@ File Number   Name   Contents
 24  noun.relation  nouns denoting relations between people or things or ideas 
              */
             expectedValue = 24;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Relation;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -426,7 +426,7 @@ File Number   Name   Contents
 25  noun.shape  nouns denoting two and three dimensional shapes  
              */
             expectedValue = 25;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Shape;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -440,7 +440,7 @@ File Number   Name   Contents
 26  noun.state  nouns denoting stable states of affairs  
              */
             expectedValue = 26;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_State;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -454,7 +454,7 @@ File Number   Name   Contents
 27  noun.substance  nouns denoting substances  
              */
             expectedValue = 27;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Substance;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -468,7 +468,7 @@ File Number   Name   Contents
 28  noun.time  nouns denoting time and temporal relations  
              */
             expectedValue = 28;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Noun_Time;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Noun;
@@ -482,7 +482,7 @@ File Number   Name   Contents
 29  verb.body  verbs of grooming, dressing and bodily care  
              */
             expectedValue = 29;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Verb_Body;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Verb;
@@ -496,7 +496,7 @@ File Number   Name   Contents
 30  verb.change  verbs of size, temperature change, intensifying, etc.  
              */
             expectedValue = 30;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Verb_Change;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Verb;
@@ -510,7 +510,7 @@ File Number   Name   Contents
 31  verb.cognition  verbs of thinking, judging, analyzing, doubting  
              */
             expectedValue = 31;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Verb_Cognition;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Verb;
@@ -524,7 +524,7 @@ File Number   Name   Contents
 32  verb.communication  verbs of telling, asking, ordering, singing  
              */
             expectedValue = 32;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Verb_Body;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Verb;
@@ -538,7 +538,7 @@ File Number   Name   Contents
 33  verb.competition  verbs of fighting, athletic activities  
              */
             expectedValue = 33;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Verb_Body;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Verb;
@@ -552,7 +552,7 @@ File Number   Name   Contents
 34  verb.consumption  verbs of eating and drinking  
              */
             expectedValue = 34;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Verb_Body;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Verb;
@@ -566,7 +566,7 @@ File Number   Name   Contents
 35  verb.contact  verbs of touching, hitting, tying, digging  
              */
             expectedValue = 35;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Verb_Body;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Verb;
@@ -580,7 +580,7 @@ File Number   Name   Contents
 36  verb.creation  verbs of sewing, baking, painting, performing  
              */
             expectedValue = 36;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Verb_Body;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Verb;
@@ -594,7 +594,7 @@ File Number   Name   Contents
 37  verb.emotion  verbs of feeling  
              */
             expectedValue = 37;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Verb_Body;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Verb;
@@ -608,7 +608,7 @@ File Number   Name   Contents
 38  verb.motion  verbs of walking, flying, swimming  
              */
             expectedValue = 38;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Verb_Body;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Verb;
@@ -622,7 +622,7 @@ File Number   Name   Contents
 39  verb.perception  verbs of seeing, hearing, feeling  
              */
             expectedValue = 39;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Verb_Body;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Verb;
@@ -636,7 +636,7 @@ File Number   Name   Contents
 40  verb.possession  verbs of buying, selling, owning  
              */
             expectedValue = 40;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Verb_Body;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Verb;
@@ -650,7 +650,7 @@ File Number   Name   Contents
 41  verb.social  verbs of political and social activities and events  
              */
             expectedValue = 41;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Verb_Body;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Verb;
@@ -664,7 +664,7 @@ File Number   Name   Contents
 42  verb.stative  verbs of being, having, spatial relations  
              */
             expectedValue = 42;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Verb_Body;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Verb;
@@ -678,7 +678,7 @@ File Number   Name   Contents
 43  verb.weather  verbs of raining, snowing, thawing, thundering  
              */
             expectedValue = 43;
-            target = LexicographerFile.Adj_Pert;
+            target = LexicographerFile.Verb_Body;
             actualValue = (short)target;
             Assert.AreEqual(expectedValue, actualValue);
             expectedPos = PartOfSpeech.Verb;
